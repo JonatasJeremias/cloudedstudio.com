@@ -1,0 +1,3 @@
+It was just another normal workday — until a single mistake changed everything.
+
+In this 2D roguelike, fight hordes of robots in electrifying melee combat. With striking pixel art, explore procedurally generated environments, secret rooms, and multiple endings.

@@ -1,0 +1,3 @@
+C’était une journée de travail comme les autres… jusqu’à ce qu’une seule erreur fasse tout basculer.
+
+Dans ce roguelike d’action 2D, affrontez des hordes de robots lors de combats au corps à corps électrisants. Avec un style pixel art percutant, explorez des environnements générés de manière procédurale, des salles secrètes et plusieurs fins possibles.

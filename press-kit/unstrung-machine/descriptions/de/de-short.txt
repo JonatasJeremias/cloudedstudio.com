@@ -1,0 +1,3 @@
+Es war ein ganz normaler Arbeitstag – bis ein einziger Fehler alles veränderte.
+
+In diesem 2D-Action-Roguelike kämpfst du in elektrisierenden Nahkampfgefechten gegen Horden von Robotern. Mit markantem Pixel-Art-Stil erkundest du prozedural generierte Umgebungen, geheime Räume und erreichst mehrere unterschiedliche Enden.

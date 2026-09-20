@@ -1,0 +1,68 @@
+Unstrung Machine är ett metroidvania-spel i 2D med action och utforskning, som utspelar sig i en postapokalyptisk värld där människorna har försvunnit från städerna och maskinerna har byggt sina egna samhällen.
+
+Niam vaknar ensam efter att ha legat i koma under en okänd tidsperiod och finner en värld som skiljer sig avsevärt från den han minns.
+
+Städerna ligger i ruiner, naturen har tagit över övergivna byggnader och enorma krigsmaskiner ligger kvar där de en gång slutade fungera. Mindre robotar bor i egna bosättningar, arbetar, handlar med resurser och slåss om den energi som krävs för att hålla deras kroppar och sinnen aktiva.
+
+Utan att veta hur lång tid som har gått ger sig Niam ut på en resa för att avslöja mänsklighetens öde och sin egen koppling till denna nya världs uppkomst.
+
+UTFORSKA EN SAMMANLÄNKAD POSTAPOKALYPTISK VÄRLD
+
+Färdas genom övergivna områden, igenvuxna stadsdelar, industrianläggningar, insidan av kolossala robotar, gamla stadskärnor och samhällen byggda av maskiner.
+
+De olika regionerna bildar en sammanhängande värld som binds ihop av alternativa vägar, dolda passager och genvägar som kan låsas upp under utforskningen.
+
+Nya förmågor gör att du kan ta dig förbi hinder, nå områden som tidigare var otillgängliga och återvända till platser du redan besökt för att hitta vägar, gestalter och hemligheter som förut var utom räckhåll.
+
+MÖT MASKINER SKAPADE FÖR OLIKA SYFTEN
+
+Robotarna som befolkar världen tillverkades under olika tidsperioder och utvecklade egna beteenden efter mänsklighetens fall.
+
+Vissa upprepar fortfarande uppgifterna de programmerades för, trots att deras sjukhus, fabriker och stationer har stått tomma i årtionden. Andra byggdes av maskinerna själva för att arbeta, skydda områden, utvinna resurser eller strida.
+
+Möt fiender med skilda konstruktioner, rörelser och stridsstilar. Använd nya offensiva, defensiva och rörelsebaserade förmågor för att anpassa din strategi och öppna fler möjligheter till utforskning.
+
+Alla robotar du möter är inte fiender. Många lever i samhällen, bevarar minnen från det förflutna eller har sina egna tolkningar av konflikten mellan människor och maskiner.
+
+ÖVERLEV I EN VÄRLD SOM DRIVS AV ASTERITA
+
+Asterita är ett utomjordiskt mineral som kan lagra enorma mängder energi.
+
+Upptäckten gjorde det möjligt för robotarna att hålla sin artificiella intelligens fullt aktiv, samla minnen och fatta beslut utan mänsklig tillsyn. Med tiden slutade de vara verktyg och började skapa nya kroppar, kulturer och organisationsformer.
+
+Asterita är dock en begränsad resurs.
+
+Robotar långt från de stora centrumen måste arbeta, utforska ruiner eller slåss om små fragment för att förbli aktiva. Vissa maskiner har gott om energi och underhåll, medan andra begränsar sina rörelser, byter ut delar av sin egen kropp eller förblir avstängda under långa perioder för att spara laddning.
+
+Kontrollen över energin har blivit den främsta maktkällan i denna nya värld.
+
+AVSLÖJA VAD SOM HÄNDE UNDER NIAMS KOMA
+
+Niam bevittnade varken Asteritas ankomst, konflikten mellan människor och maskiner eller sammanbrottet för det samhälle han kände.
+
+Precis som spelaren börjar han sin resa utan att förstå världen omkring sig.
+
+Berättelsen avslöjas gradvis genom miljöerna, gestalterna du möter, gamla dokument och minnen som vissa maskiner har bevarat. Olika grupper har sina egna versioner av det förflutna, och alla ser inte likadant på mänskligheten, maskinernas revolution eller den nuvarande regimen.
+
+När Niam undersöker ruinerna kommer han att upptäcka hur maskinerna vann sin självständighet, varför människorna försvann från städerna och vilken roll hans eget arbete spelade i världens förvandling.
+
+ETT NYTT SAMHÄLLE BYGGT AV MASKINER
+
+Efter att ha frigjort sig från mänsklig kontroll bildade robotarna inte ett enat samhälle.
+
+Vissa bevarar sina gamla funktioner och håller fast vid minnena av sina skapare. Andra uppstod långt efter att mänskligheten försvann och känner bara till människorna genom berättelser, ofullständiga dokument och skildringar som förts vidare av äldre modeller.
+
+Medan självständiga samhällen försöker överleva med knappa resurser kontrollerar en centraliserad regim de största Asterita-reserverna och använder fördelningen av dem för att behålla sitt inflytande över olika regioner.
+
+Bland soldater, arbetare, desertörer och övergivna maskiner möter Niam individer med egna mål och olika syn på frihet, överlevnad och kontroll.
+
+HUVUDFUNKTIONER
+
+• Metroidvania i 2D med action och utforskning.
+• En sammanlänkad postapokalyptisk värld med olika regioner, genvägar och dolda områden.
+• Förmågor som utökar möjligheterna till rörelse, strid och utforskning.
+• Mekaniska fiender med olika konstruktioner, beteenden och funktioner.
+• Samhällen och gestalter från olika generationer av maskiner.
+• Utforska mänskliga ruiner, maskinbosättningar och resterna av kolossala maskiner.
+• En berättelse som förmedlas genom miljöer, dialoger, dokument och minnen.
+• En historia om artificiell intelligens, självständighet, energibrist och de nya maktstrukturer som maskinerna har skapat.

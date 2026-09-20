@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Press Kit - Unstrung Machine</title>
+    <meta name="description" content="Official press kit for Unstrung Machine, a 2D action-exploration metroidvania by Clouded Studio.">
+    <title>Unstrung Machine — Official Press Kit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     <style>
@@ -11,17 +12,22 @@
         .mono { font-family: 'JetBrains Mono', monospace; }
         .fact-label { color: #66c0f4; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; letter-spacing: 0.1em; }
         .section-title { border-bottom: 1px solid #2d3748; padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; }
-        .lang-card { background: #1a202c; border: 1px solid #2d3748; transition: all 0.2s ease; cursor: pointer; }
-        .lang-card.active { border-color: #66c0f4; background: rgba(102, 192, 244, 0.1); color: white; }
-        .desc-title { color: #fff; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em; }
+        .description-copy h3 { color: #fff; font-weight: 700; margin-top: 2rem; margin-bottom: 0.75rem; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.05em; }
+        .description-copy p { margin-top: 1rem; }
+        .description-copy ul { display: grid; gap: 0.75rem; margin-top: 1rem; }
+        .description-copy li { position: relative; padding-left: 1.5rem; }
+        .description-copy li::before { content: '»'; position: absolute; left: 0; color: #66c0f4; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+        .description-copy strong { color: #fff; font-weight: 700; }
+        .asset-card { background: #11141d; border: 1px solid #1f2937; transition: border-color 0.2s ease, transform 0.2s ease; }
+        .asset-card:hover { border-color: #66c0f4; transform: translateY(-2px); }
     </style>
 </head>
 <body class="antialiased leading-relaxed">
-
     <header class="bg-[#11141d] border-b border-gray-800 py-10">
-        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-                <h1 class="text-4xl font-extrabold text-white tracking-tighter uppercase italic">UNSTRUNG MACHINE</h1>
+                <a href="../../index.html" class="mono text-xs text-gray-500 hover:text-[#66c0f4] transition">← CLOUDED STUDIO</a>
+                <h1 class="text-4xl font-extrabold text-white tracking-tighter uppercase italic mt-3">UNSTRUNG MACHINE</h1>
                 <p class="mono text-[#66c0f4] text-sm mt-1 uppercase tracking-widest">Official Press Kit</p>
             </div>
             <a href="unstrung-machine-press-kit.zip" download="unstrung-machine-press-kit.zip" class="bg-white hover:bg-[#66c0f4] text-black font-bold px-6 py-3 rounded transition flex items-center gap-2 text-sm uppercase tracking-tighter">
@@ -30,95 +36,116 @@
         </div>
     </header>
 
-    <div class="max-w-5xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-12">
-        
+    <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-12">
         <aside class="md:col-span-1 space-y-10">
             <div>
-                <h3 class="section-title text-sm">Factsheet</h3>
+                <h2 class="section-title text-sm">Factsheet</h2>
                 <div class="space-y-4 text-sm">
                     <div><p class="fact-label">Developer</p><p class="text-white">Jonatas Jeremias<br>Recife, Brazil</p></div>
                     <div><p class="fact-label">Publisher</p><p class="text-white">Clouded Studio</p></div>
                     <div><p class="fact-label">Release Date</p><p class="text-white font-bold text-blue-400">Coming Soon</p></div>
-                    <div><p class="fact-label">Platforms</p><p class="text-white">PC (Windows / Steam)</p></div>
-                    <div><p class="fact-label">Links</p><a href="https://store.steampowered.com/app/3940770/" target="_blank" class="text-blue-400 hover:underline block">Steam Store Page</a></div>
+                    <div><p class="fact-label">Genre</p><p class="text-white">2D Action-Exploration Metroidvania</p></div>
+                    <div><p class="fact-label">Platform</p><p class="text-white">PC (Windows / Steam)</p></div>
+                    <div><p class="fact-label">Link</p><a href="https://store.steampowered.com/app/3940770/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline block">Steam Store Page</a></div>
                 </div>
             </div>
             <div>
-                <h3 class="section-title text-sm">Contact</h3>
+                <h2 class="section-title text-sm">Contact</h2>
                 <div class="space-y-2 text-sm">
                     <p class="fact-label">Inquiries</p>
-                    <a href="mailto:cloudedstudioindie@gmail.com" class="text-white hover:text-blue-400">cloudedstudioindie@gmail.com</a>
+                    <a href="mailto:cloudedstudioindie@gmail.com" class="text-white hover:text-blue-400 break-all">cloudedstudioindie@gmail.com</a>
                 </div>
             </div>
         </aside>
 
-        <main class="md:col-span-3 space-y-12">
-
+        <main class="md:col-span-3 space-y-16">
             <section>
-                <div class="flex flex-wrap gap-2">
-                    <div onclick="setLanguage('en')" id="lang-en" class="lang-card active px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇺🇸 EN</div>
-                    <div onclick="setLanguage('pt')" id="lang-pt" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇧🇷 PT</div>
-                    <div onclick="setLanguage('es')" id="lang-es" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇪🇸 ES</div>
-                    <div onclick="setLanguage('fr')" id="lang-fr" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇫🇷 FR</div>
-                    <div onclick="setLanguage('de')" id="lang-de" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇩🇪 DE</div>
-                    <div onclick="setLanguage('ru')" id="lang-ru" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇷🇺 RU</div>
-                    <div onclick="setLanguage('ko')" id="lang-ko" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇰🇷 KO</div>
-                    <div onclick="setLanguage('ja')" id="lang-ja" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇯🇵 JA</div>
-                    <div onclick="setLanguage('zh')" id="lang-zh" class="lang-card px-3 py-2 rounded flex items-center gap-2 text-[10px] font-bold uppercase">🇨🇳 ZH</div>
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+                    <h2 class="section-title text-2xl flex-1 mb-0">Description</h2>
+                    <label for="language-select" class="sr-only">Description language</label>
+                    <select id="language-select" class="bg-[#1a202c] border border-gray-700 text-white text-sm rounded px-3 py-2 focus:outline-none focus:border-[#66c0f4]">
+                        <option value="en">English</option>
+                        <option value="pt-br">Português (Brasil)</option>
+                        <option value="pt-pt">Português (Portugal)</option>
+                        <option value="es-419">Español (Latinoamérica)</option>
+                        <option value="es-es">Español (España)</option>
+                        <option value="de">Deutsch</option>
+                        <option value="fr">Français</option>
+                        <option value="it">Italiano</option>
+                        <option value="nl">Nederlands</option>
+                        <option value="da">Dansk</option>
+                        <option value="fi">Suomi</option>
+                        <option value="no">Norsk</option>
+                        <option value="sv">Svenska</option>
+                        <option value="pl">Polski</option>
+                        <option value="cs">Čeština</option>
+                        <option value="hu">Magyar</option>
+                        <option value="ro">Română</option>
+                        <option value="bg">Български</option>
+                        <option value="el">Ελληνικά</option>
+                        <option value="ru">Русский</option>
+                        <option value="uk">Українська</option>
+                        <option value="tr">Türkçe</option>
+                        <option value="ar">العربية</option>
+                        <option value="id">Bahasa Indonesia</option>
+                        <option value="ms">Bahasa Melayu</option>
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="th">ไทย</option>
+                        <option value="ko">한국어</option>
+                        <option value="ja">日本語</option>
+                        <option value="zh-cn">简体中文</option>
+                        <option value="zh-tw">繁體中文</option>
+                    </select>
                 </div>
-            </section>
-            
-            <section id="description-section">
-                <h2 class="section-title text-2xl">Description</h2>
-                <div class="space-y-8">
+                <div id="description-status" class="mono text-xs text-gray-500" role="status">Loading description…</div>
+                <div id="description-content" class="hidden space-y-8">
                     <div>
-                        <h4 class="mono text-xs text-gray-500 mb-2 uppercase tracking-widest">Short Description</h4>
+                        <h3 class="mono text-xs text-gray-500 mb-2 uppercase tracking-widest">Short Description</h3>
                         <p id="short-desc" class="text-xl text-white font-medium leading-relaxed"></p>
                     </div>
                     <div>
-                        <h4 class="mono text-xs text-gray-500 mb-2 uppercase tracking-widest">Long Description</h4>
-                        <div id="long-desc" class="text-gray-400 space-y-4"></div>
+                        <h3 class="mono text-xs text-gray-500 mb-2 uppercase tracking-widest">Long Description</h3>
+                        <div id="long-desc" class="description-copy text-gray-400"></div>
                     </div>
                 </div>
             </section>
 
             <section>
-                <h2 class="section-title text-2xl">Key Features</h2>
-                <ul class="grid grid-cols-1 gap-3 text-white" id="features-list"></ul>
+                <h2 class="section-title text-2xl">Screenshots</h2>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <a href="images/screenshots/screenshot-1.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-1.png" alt="Unstrung Machine screenshot — ruined gothic interior" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-2.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-2.png" alt="Unstrung Machine screenshot — colossal fallen machine" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-3.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-3.png" alt="Unstrung Machine screenshot — combat against a mechanical enemy" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-4.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-4.png" alt="Unstrung Machine screenshot — overgrown city exploration" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-5.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-5.png" alt="Unstrung Machine screenshot — forest exploration" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-6.png" class="asset-card rounded overflow-hidden"><img src="images/screenshots/screenshot-6.png" alt="Unstrung Machine screenshot — giant machine ruins in the forest" loading="lazy"></a>
+                    <a href="images/screenshots/screenshot-7.png" class="asset-card rounded overflow-hidden sm:col-span-2"><img src="images/screenshots/screenshot-7.png" alt="Unstrung Machine screenshot — Niam beneath a large tree" loading="lazy" class="w-full"></a>
+                </div>
             </section>
 
             <section>
-                <h2 class="section-title text-2xl">Media Gallery</h2>
-                <!-- <div class="aspect-video w-full bg-black rounded border border-gray-800 overflow-hidden mb-6 shadow-2xl">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
-                </div> -->
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="images/screenshots/screenshot-1.png" class="rounded border border-gray-800">
-                    <img src="images/screenshots/screenshot-2.png" class="rounded border border-gray-800">
-                    <img src="images/screenshots/screenshot-3.png" class="rounded border border-gray-800">
-                    <img src="images/screenshots/screenshot-4.png" class="rounded border border-gray-800">
-                    <img src="images/screenshots/screenshot-5.png" class="rounded border border-gray-800">
-                    <img src="images/screenshots/screenshot-6.png" class="rounded border border-gray-800">
-                </div>
-            </section>
-            <section>
                 <h2 class="section-title text-2xl">Graphical Assets</h2>
-                <!-- <div class="aspect-video w-full bg-black rounded border border-gray-800 overflow-hidden mb-6 shadow-2xl">
-                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allowfullscreen></iframe>
-                </div> -->
-                <h4 class="desc-title">Library</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="images/graphical-assets-library/library_capsule.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-library/library_header.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-library/library_hero.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-library/library_logo.png" class="rounded border border-gray-800">
+                <h3 class="text-white font-bold mt-8 mb-4 uppercase text-sm tracking-widest">Store</h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-store/header_image.png"><img src="images/graphical-assets-store/header_image.png" alt="Steam store header capsule" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Header capsule · 920 × 430</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-store/main_capsule.png"><img src="images/graphical-assets-store/main_capsule.png" alt="Steam store main capsule" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Main capsule · 1232 × 706</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-store/small_capsule.png"><img src="images/graphical-assets-store/small_capsule.png" alt="Steam store small capsule" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Small capsule · 462 × 174</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-store/hero_capsule.png"><img src="images/graphical-assets-store/hero_capsule.png" alt="Steam store vertical capsule" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Vertical capsule · 748 × 896</figcaption></figure>
                 </div>
-                <h4 class="desc-title">Store</h4>
-                <div class="grid grid-cols-2 gap-4">
-                    <img src="images/graphical-assets-store/header_image.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-store/hero_capsule.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-store/main_capsule.png" class="rounded border border-gray-800">
-                    <img src="images/graphical-assets-store/small_capsule.png" class="rounded border border-gray-800">
+
+                <h3 class="text-white font-bold mt-10 mb-4 uppercase text-sm tracking-widest">Library</h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-library/library_capsule.png"><img src="images/graphical-assets-library/library_capsule.png" alt="Steam library capsule" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Library capsule · 600 × 900</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-library/library_header.png"><img src="images/graphical-assets-library/library_header.png" alt="Steam library header" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Library header · 920 × 430</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-library/library_hero.png"><img src="images/graphical-assets-library/library_hero.png" alt="Steam library hero image" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Library hero · 3840 × 1240</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/graphical-assets-library/library_logo.png"><img src="images/graphical-assets-library/library_logo.png" alt="Unstrung Machine library logo" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Library logo · 1280 × 720</figcaption></figure>
+                </div>
+
+                <h3 class="text-white font-bold mt-10 mb-4 uppercase text-sm tracking-widest">Original Artwork</h3>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/originals/steam-art.png"><img src="images/originals/steam-art.png" alt="Unstrung Machine key art with logo" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Key art with logo · 3840 × 2160</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden"><a href="images/originals/steam-art-without-logo.png"><img src="images/originals/steam-art-without-logo.png" alt="Unstrung Machine key art without logo" loading="lazy"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Key art without logo · 3840 × 2160</figcaption></figure>
+                    <figure class="asset-card rounded overflow-hidden sm:col-span-2"><a href="images/originals/unstrung-machine-logo.png"><img src="images/originals/unstrung-machine-logo.png" alt="Unstrung Machine logo" loading="lazy" class="w-full"></a><figcaption class="px-3 py-2 mono text-[10px] uppercase">Logo · 5568 × 3072</figcaption></figure>
                 </div>
             </section>
         </main>
@@ -128,206 +155,75 @@
         Unstrung Machine // Press Kit // 2026
     </footer>
 
+    <script src="descriptions.js"></script>
     <script>
-        const content = {
-            en: {
-                short: "It was just another normal workday — until a single mistake changed everything. In this 2D roguelike, fight hordes of robots in electrifying melee combat. With striking pixel art, explore procedurally generated environments, secret rooms, and multiple endings.",
-                long: `
-                    <h5 class="desc-title">Survive the Cybernetic Apocalypse</h5>
-                    <p>Unstrung Machine is a fast-paced action roguelike where you play as Niam, a programmer trapped inside his own workplace. After a minor accident, everything spirals out of control — and now survival is your only option. Face relentless hordes of robots in frenetic close-quarters combat, using dodges, blocks, parries — and even your enemies themselves — as weapons.</p>
-                    
-                    <h5 class="desc-title">Explore, Adapt, and Uncover Secrets</h5>
-                    <p>Discover hidden items and powerful upgrades as you explore ever-changing environments. Each run features procedurally generated levels, interconnected rooms, secret areas, environmental hazards, and multiple possible endings. No two runs are ever the same.</p>
-                    
-                    <h5 class="desc-title">Take Control of Your Enemies</h5>
-                    <p>Beyond fighting with your own hands, you can hack into enemy androids and take control of them, using their abilities to fight while preserving your own health and resources. Each robot has unique traits, making every possession feel distinct and keeping the gameplay fresh and dynamic.</p>
-                    
-                    <h5 class="desc-title">Evolve, Adapt, Resist</h5>
-                    <p>Collect items, unlock new abilities, upgrade your character, and build powerful synergies every run. Learn from each defeat, adapt your playstyle, and grow stronger with every attempt.</p>
-                `,
-                features: [
-                    "High-replayability action roguelike",
-                    "Fast and dynamic combat with dodging, blocking, and multiple strategies",
-                    "Unique enemy possession system",
-                    "Procedurally generated rooms and environments",
-                    "Multiple routes, meaningful choices, and different endings",
-                    "Deep character progression with items, abilities, and upgrades",
-                    "A mysterious narrative centered on technology, corporate collapse, and survival"
-                ]
-            },
-            pt: {
-                short: "Era apenas mais um dia normal de trabalho — até que um único erro mudou tudo. Neste roguelike 2D, lute contra hordas de robôs em um combate corpo a corpo eletrizante. Com uma pixel art marcante, explore ambientes gerados proceduralmente, salas secretas e múltiplos finais.",
-                long: `
-                    <h5 class="desc-title">Sobreviva ao Apocalipse Cibernético</h5>
-                    <p>Unstrung Machine é um roguelike de ação frenético onde você joga como Niam, um programador preso dentro de seu próprio local de trabalho. Após um pequeno acidente, tudo sai de controle — e agora a sobrevivência é sua única opção. Enfrente hordas implacáveis de robôs em combates próximos frenéticos, usando esquivas, bloqueios, parries — e até seus próprios inimigos — como armas.</p>
-                    
-                    <h5 class="desc-title">Explore, Adapte-se e Descubra Segredos</h5>
-                    <p>Descubra itens ocultos e atualizações poderosas enquanto explora ambientes em constante mudança. Cada partida apresenta níveis gerados proceduralmente, salas interconectadas, áreas secretas, perigos ambientais e vários finais possíveis. Nenhuma partida é igual à outra.</p>
-                    
-                    <h5 class="desc-title">Assuma o Controle dos Seus Inimigos</h5>
-                    <p>Além de lutar com as próprias mãos, você pode hackear androides inimigos e assumir o controle deles, usando suas habilidades para lutar enquanto preserva sua própria saúde e recursos. Cada robô tem características únicas, fazendo com que cada possessão pareça distinta e mantendo a jogabilidade fresca e dinâmica.</p>
-                `,
-                features: [
-                    "Roguelike de ação com alta rejogabilidade",
-                    "Combate rápido e dinâmico com esquiva, bloqueio e múltiplas estratégias",
-                    "Sistema único de possessão de inimigos",
-                    "Salas e ambientes gerados proceduralmente",
-                    "Múltiplas rotas, escolhas significativas e finais diferentes",
-                    "Progressão profunda de personagem com itens, habilidades e upgrades",
-                    "Narrativa misteriosa centrada em tecnologia, colapso corporativo e sobrevivência"
-                ]
-            },
-            es: {
-                short: "Era un día normal de trabajo… hasta que un solo error lo cambió todo. En este roguelike de acción 2D, enfréntate a hordas de robots en electrizantes combates cuerpo a cuerpo. Con un marcado estilo pixel art, explora escenarios generados proceduralmente, salas secretas y múltiples finales.",
-                long: `
-                    <h5 class="desc-title">Sobrevive al Apocalipsis Cibernético</h5>
-                    <p>Unstrung Machine es un roguelike de acción trepidante en el que asumes el papel de Niam, un programador que queda atrapado en su propio lugar de trabajo. Tras un pequeño accidente, todo se sale de control y sobrevivir se convierte en la única opción.</p>
-                    <h5 class="desc-title">Explora, Adáptate y Descubre Secretos</h5>
-                    <p>Encuentra objetos ocultos y poderosas mejoras mientras recorres entornos que cambian en cada partida. Cada run ofrece niveles generados proceduralmente, salas interconectadas y múltiples finales posibles.</p>
-                    <h5 class="desc-title">Toma el Control de tus Enemigos</h5>
-                    <p>Además de luchar con tus propias manos, puedes hackear androides enemigos y controlarlos directamente, utilizando sus habilidades únicas para combatir mientras conservas tu salud.</p>
-                `,
-                features: ["Roguelike de acción con alta rejugabilidad", "Combate rápido y dinámico", "Sistema único de control de enemigos", "Escenarios y salas procedimentales", "Múltiples rutas y finales", "Progresión profunda del personaje", "Narrativa de misterio y colapso corporativo"]
-            },
-            fr: {
-                short: "C’était une journée de travail comme les autres… jusqu’à ce qu’une seule erreur fasse tout basculer. Dans ce roguelike d’action 2D, affrontez des hordes de robots lors de combats au corps à corps électrisants.",
-                long: `
-                    <h5 class="desc-title">Survivez à l’Apocalypse Cybernétique</h5>
-                    <p>Unstrung Machine est un roguelike d’action au rythme effréné dans lequel vous incarnez Niam, un programmeur piégé dans son propre lieu de travail.</p>
-                    <h5 class="desc-title">Explorez, adaptez-vous et découvrez des secrets</h5>
-                    <p>Chaque partie propose des niveaux générés procéduralement, des salles interconnectées, des zones secrètes et plusieurs fins possibles.</p>
-                    <h5 class="desc-title">Prenez le contrôle de vos ennemis</h5>
-                    <p>En plus du combat à mains nues, vous pouvez pirater des androïdes ennemis et les contrôler directement.</p>
-                `,
-                features: [
-                    "Roguelike d’action avec une grande rejouabilité",
-                    "Système de combat rapide et dynamique",
-                    "Mécanique unique de contrôle des ennemis",
-                    "Salles et environnements générés procéduralement",
-                    "Plusieurs chemins, choix significatifs et fins alternatives"
-                ]
-            },
-            de: {
-                short: "Es war ein ganz normaler Arbeitstag – bis ein einziger Fehler alles veränderte. In diesem 2D-Action-Roguelike kämpfst du in elektrisierenden Nahkampfgefechten gegen Horden von Robotern.",
-                long: `
-                    <h5 class="desc-title">Überlebe die cybernetische Apokalypse</h5>
-                    <p>Unstrung Machine ist ein temporeiches Action-Roguelike, in dem du die Rolle von Niam, einem Programmierer, übernimmst, der in seinem eigenen Arbeitsplatz gefangen ist. Nach einem kleinen Unfall gerät alles außer Kontrolle – und Überleben wird zur einzigen Priorität.</p>
-                    <h5 class="desc-title">Erkunde, passe dich an und entdecke Geheimnisse</h5>
-                    <p>Finde versteckte Gegenstände und mächtige Upgrades. Jeder Durchlauf bietet prozedural generierte Level, miteinander verbundene Räume, geheime Bereiche und Umweltgefahren.</p>
-                    <h5 class="desc-title">Übernimm die Kontrolle über deine Feinde</h5>
-                    <p>Neben dem Kampf mit bloßen Händen kannst du feindliche Androiden hacken und direkt kontrollieren, ihre einzigartigen Fähigkeiten nutzen und dabei deine Ressourcen schonen.</p>
-                `,
-                features: [
-                    "Action-Roguelike mit hoher Wiederspielbarkeit",
-                    "Schnelles, dynamisches Kampfsystem mit Ausweichen, Blocken und Paraden",
-                    "Einzigartiges System zur Kontrolle von Gegnern",
-                    "Prozedural generierte Räume und Umgebungen",
-                    "Mehrere Routen, Entscheidungen und verschiedene Enden",
-                    "Tiefgehende Charakterprogression mit Items und Fähigkeiten",
-                    "Geheimnisvolle Geschichte rund um Konzernkollaps und Überleben"
-                ]
-            },
-            ru: {
-                short: "Это был обычный рабочий день… пока одна ошибка не изменила всё. В этом 2D экшен-рогалике вам предстоит сражаться с ордами роботов в захватывающих боях.",
-                long: `
-                    <h5 class="desc-title">Выживи в кибернетическом апокалипсисе</h5>
-                    <p>Unstrung Machine — это динамичный экшен-рогалик, в котором вы играете за Ниама, программиста, оказавшегося в ловушке на собственном рабочем месте.</p>
-                    <h5 class="desc-title">Исследуй, адаптируйся и раскрывай тайны</h5>
-                    <p>Каждый забег предлагает процедурно генерируемые локации, взаимосвязанные комнаты, секретные зоны и опасности окружения.</p>
-                    <h5 class="desc-title">Подчини себе врагов</h5>
-                    <p>Вы можете взламывать вражеских андроидов и напрямую управлять ими, используя их уникальные способности в бою.</p>
-                `,
-                features: [
-                    "Экшен-рогалик с высокой реиграбельностью",
-                    "Быстрая и динамичная боевая система",
-                    "Уникальная система контроля над врагами",
-                    "Процедурно генерируемые уровни и комнаты",
-                    "Несколько маршрутов и значимые решения",
-                    "Глубокая система развития персонажа",
-                    "Загадочный сюжет о технологиях и выживании"
-                ]
-            },
-            ko: {
-                short: "평범했던 어느 근무일—단 하나의 실수가 모든 것을 바꿔 놓았다. 이 2D 액션 로그라이크 게임에서 수많은 로봇들과 짜릿한 근접 전투를 펼쳐라.",
-                long: `
-                    <h5 class="desc-title">사이버네틱 아포칼립스에서 살아남아라</h5>
-                    <p>Unstrung Machine은 빠른 템포의 액션 로그라이크 게임이다. 당신은 프로그래머 니암(Niam)이 되어, 한 번의 사고로 인해 자신이 일하던 회사 안에 갇히게 된다. 이제 살아남는 것만이 유일한 목표가 된다.</p>
-                    <h5 class="desc-title">탐험하고, 적응하고, 숨겨진 비밀을 밝혀라</h5>
-                    <p>숨겨진 아이템과 강력한 업그레이드를 발견하며 끊임없이 변화하는 환경을 탐험하라. 매 플레이마다 절차적으로 생성되는 스테이지와 여러 가지 엔딩이 기다리고 있다.</p>
-                    <h5 class="desc-title">적을 지배하라</h5>
-                    <p>맨몸으로 싸우는 것뿐만 아니라, 적 안드로이드를 해킹하여 직접 조종할 수 있다. 적의 고유 능력을 활용해 전투를 유리하게 이끌고 자원을 아껴라.</p>
-                    <h5 class="desc-title">진화하고, 적응하고, 저항하라</h5>
-                    <p>아이템을 수집하고, 스킬을 해금하며, 캐릭터를 강화해 매번 강력한 시너지를 구축하라. 실패를 통해 배우며 도전을 이어가라.</p>
-                `,
-                features: [
-                    "높은 반복 플레이 가치를 지닌 액션 로그라이크",
-                    "회피, 방어, 다양한 전략이 가능한 전투 시스템",
-                    "독창적인 적 조종(해킹) 시스템",
-                    "절차적으로 생성되는 맵과 방",
-                    "다양한 루트, 선택, 그리고 여러 엔딩",
-                    "아이템과 스킬을 기반으로 한 성장 시스템",
-                    "기술과 기업 붕괴를 주제로 한 미스터리한 스토리"
-                ]
-            },
-            ja: {
-                short: "いつもと変わらない仕事の日——しかし、たった一つのミスがすべてを変えてしまった。この 2D アクション・ローグライクでは、数えきれないロボットたちとスリリングな近接戦闘を繰り広げる。",
-                long: `
-                    <h5 class="desc-title">サイバネティック・アポカリプスを生き延びろ</h5>
-                    <p>Unstrung Machine は、スピーディーな展開が魅力のアクション・ローグライクゲーム。プレイヤーはプログラマーのニアム（Niam）となり、ある事故をきっかけに自分の職場に閉じ込められてしまう。小さなトラブルはやがて制御不能の事態へと発展し、生き残ることだけが唯一の目的となる。</p>
-                    <h5 class="desc-title">探索し、適応し、秘密を解き明かせ</h5>
-                    <p>隠されたアイテムや強力なアップグレードを発見しながら、変化し続ける環境を進んでいく。毎回のプレイごとにプロシージャル生成されるステージ、相互につながった部屋、隠しエリアが用意されている。</p>
-                    <h5 class="desc-title">敵を支配せよ</h5>
-                    <p>素手で戦うだけでなく、敵のアンドロイドにハッキングして乗っ取ることも可能。ロボットを操り、自身の体力やリソースを温存しながら戦局を有利に進めよう。</p>
-                    <h5 class="desc-title">進化し、適応し、抗え</h5>
-                    <p>アイテムを集め、スキルを解放し、キャラクターを強化して、毎回のランで強力なシナジーを構築しよう。敗北から学び、挑戦を重ねるごとに強くなれ。</p>
-                `,
-                features: [
-                    "高いリプレイ性を誇るアクション・ローグライク",
-                    "回避・ガード・多彩な戦術が鍵となる高速バトル",
-                    "敵を操る独自のハッキングシステム",
-                    "プロシージャル生成によるステージと部屋",
-                    "複数のルート、重要な選択、異なるエンディング",
-                    "アイテムやスキルによる奥深いキャラクター成長",
-                    "テクノロジー、企業崩壊、生存をテーマにした物語"
-                ]
-            },
-            zh: {
-                short: "原本只是普通的一天工作——直到一个错误改变了一切。在这款 2D 动作类 Roguelike 游戏中，你将与成群的机器人展开激烈的近战战斗。凭借鲜明的像素美术风格，探索程序生成的关卡、隐藏房间以及多种不同结局。",
-                long: `
-                    <h5 class="desc-title">在赛博末日中求生</h5>
-                    <p>Unstrung Machine 是一款节奏快速的动作 Roguelike 游戏。你将扮演程序员 Niam，在一次意外之后，被困在自己工作的公司内部。一场小事故迅速演变成失控的灾难，而你唯一的目标就是——生存下去。</p>
-                    <h5 class="desc-title">探索、适应，并揭开隐藏的秘密</h5>
-                    <p>发现隐藏道具和强力升级，在不断变化的环境中前进。每一局游戏都会生成全新的关卡布局，包含程序生成的场景、相互连接的房间、隐藏区域、环境陷阱以及多个不同结局。</p>
-                    <h5 class="desc-title">掌控你的敌人</h5>
-                    <p>除了徒手战斗，你还可以入侵敌方安卓机器人并直接操控它们，利用它们独特的能力作战，从而节省自己的生命值和资源。每种机器人都拥有不同的特性，使得每次操控都独一无二。</p>
-                `,
-                features: [
-                    "高重玩价值的动作 Roguelike 游戏",
-                    "快速且富有策略性的战斗系统",
-                    "独特的敌人操控机制",
-                    "程序生成的关卡与房间",
-                    "多条路线、关键决策与不同结局",
-                    "深度角色成长系统，包含道具、技能与升级",
-                    "围绕科技、企业崩塌与生存展开的神秘剧情"
-                ]
-            }
-        };
+        const availableLanguages = Object.keys(window.pressKitDescriptions || {});
+        const rightToLeftLanguages = new Set(['ar']);
+        const languageSelect = document.getElementById('language-select');
+        const status = document.getElementById('description-status');
+        const content = document.getElementById('description-content');
+        const shortDescription = document.getElementById('short-desc');
+        const longDescription = document.getElementById('long-desc');
 
-        function setLanguage(lang) {
-            document.getElementById('short-desc').innerText = content[lang].short;
-            document.getElementById('long-desc').innerHTML = content[lang].long;
-            
-            const list = document.getElementById('features-list');
-            list.innerHTML = '';
-            content[lang].features.forEach(f => {
-                list.innerHTML += `<li class="flex items-start gap-3"><span class="text-[#66c0f4] mono font-bold">»</span> <span class="text-sm">${f}</span></li>`;
-            });
-
-            document.querySelectorAll('.lang-card').forEach(el => el.classList.remove('active'));
-            document.getElementById('lang-' + lang).classList.add('active');
+        function escapeHtml(value) {
+            const element = document.createElement('div');
+            element.textContent = value;
+            return element.innerHTML;
         }
 
-        setLanguage('en');
+        function renderSteamBbcode(value) {
+            const source = escapeHtml(value.replace(/\r/g, '').trim());
+            if (!source.includes('[p]') && !source.includes('[h2]')) {
+                return source.split(/\n{2,}/).map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`).join('');
+            }
+
+            return source
+                .replace(/\[h2\]/gi, '<h3>')
+                .replace(/\[\/h2\]/gi, '</h3>')
+                .replace(/\[b\]/gi, '<strong>')
+                .replace(/\[\/b\]/gi, '</strong>')
+                .replace(/\[list\]/gi, '<ul>')
+                .replace(/\[\/list\]/gi, '</ul>')
+                .replace(/\[\*\]/g, '<li>')
+                .replace(/\[\/\*\]/g, '</li>')
+                .replace(/\[p\]\s*\[\/p\]/gi, '')
+                .replace(/\[p\]/gi, '<p>')
+                .replace(/\[\/p\]/gi, '</p>')
+                .replace(/\n+/g, '');
+        }
+
+        function preferredLanguage() {
+            const browserLanguage = navigator.language.toLowerCase();
+            if (availableLanguages.includes(browserLanguage)) return browserLanguage;
+            if (browserLanguage.startsWith('pt')) return browserLanguage === 'pt-pt' ? 'pt-pt' : 'pt-br';
+            if (browserLanguage.startsWith('es')) return browserLanguage === 'es-es' ? 'es-es' : 'es-419';
+            if (browserLanguage.startsWith('zh')) return browserLanguage.includes('tw') || browserLanguage.includes('hk') ? 'zh-tw' : 'zh-cn';
+            const baseLanguage = browserLanguage.split('-')[0];
+            return availableLanguages.includes(baseLanguage) ? baseLanguage : 'en';
+        }
+
+        function setLanguage(language) {
+            const selectedDescription = window.pressKitDescriptions?.[language];
+            if (!selectedDescription) {
+                status.textContent = 'The selected description is temporarily unavailable.';
+                status.classList.remove('hidden');
+                content.classList.add('hidden');
+                return;
+            }
+
+            const isRightToLeft = rightToLeftLanguages.has(language);
+            shortDescription.textContent = selectedDescription.short.trim();
+            longDescription.innerHTML = renderSteamBbcode(selectedDescription.long);
+            shortDescription.dir = isRightToLeft ? 'rtl' : 'ltr';
+            longDescription.dir = isRightToLeft ? 'rtl' : 'ltr';
+            document.documentElement.lang = language;
+            status.classList.add('hidden');
+            content.classList.remove('hidden');
+        }
+
+        languageSelect.addEventListener('change', event => setLanguage(event.target.value));
+        languageSelect.value = preferredLanguage();
+        setLanguage(languageSelect.value);
     </script>
 </body>
 </html>

@@ -1,0 +1,68 @@
+Unstrung Machine egy akcióra és felfedezésre épülő 2D-s metroidvania, amely egy posztapokaliptikus világban játszódik. Az emberiség eltűnt a városokból, a gépek pedig saját társadalmakat hoztak létre.
+
+Niam egy ismeretlen ideig tartó kóma után magányosan ébred fel, és az emlékeiben élőtől merőben eltérő világot talál.
+
+A városok romokban hevernek, a természet visszahódította az elhagyott épületeket, a hatalmas harci gépek pedig ott fekszenek, ahol egykor leálltak. A kisebb robotok saját településeken élnek, dolgoznak, erőforrásokkal kereskednek, és a testük, illetve elméjük működéséhez szükséges energiáért küzdenek.
+
+Niam nem tudja, mennyi idő telt el, ezért útnak indul, hogy feltárja az emberiség sorsát és saját kapcsolatát ennek az új világnak a születésével.
+
+FEDEZZ FEL EGY ÖSSZEFÜGGŐ POSZTAPOKALIPTIKUS VILÁGOT
+
+Járj be elhagyott területeket, növényzettel benőtt városrészeket, ipari létesítményeket, kolosszális robotok belsejét, régi városközpontokat és gépek által épített közösségeket.
+
+A különböző régiók egyetlen összefüggő világot alkotnak, amelyet alternatív útvonalak, rejtett átjárók és a felfedezés során megnyitható rövidebb utak hálóznak be.
+
+Az új képességekkel leküzdheted az akadályokat, korábban elérhetetlen területekre juthatsz el, és visszatérhetsz a már meglátogatott helyszínekre, hogy eddig hozzáférhetetlen útvonalakat, szereplőket és titkokat találj.
+
+SZÁLLJ SZEMBE KÜLÖNBÖZŐ FELADATOKRA ALKOTOTT GÉPEKKEL
+
+A világot benépesítő robotokat különböző korszakokban gyártották, és az emberiség bukása után saját viselkedésformákat alakítottak ki.
+
+Néhányan még mindig azokat a feladatokat végzik, amelyekre programozták őket, noha kórházaik, gyáraik és állomásaik évtizedek óta üresen állnak. Másokat maguk a gépek építettek munkára, területek védelmére, erőforrások kitermelésére vagy harcra.
+
+Küzdj eltérő felépítésű, mozgású és harcmodorú ellenfelekkel. Új támadó, védekező és mozgási képességekkel igazítsd a helyzethez a taktikádat, és bővítsd a felfedezés lehetőségeit.
+
+Nem minden robot lesz ellenség, akivel találkozol. Sokan közösségekben élnek, őrzik a múlt emlékeit, vagy saját értelmezésük van az emberek és gépek közötti konfliktusról.
+
+ÉLJ TÚL EGY ASTERITA ÁLTAL HAJTOTT VILÁGBAN
+
+Az Asterita egy földönkívüli ásvány, amely hatalmas mennyiségű energia tárolására képes.
+
+Felfedezése lehetővé tette, hogy a robotok teljesen aktívan tartsák mesterséges intelligenciájukat, emlékeket halmozzanak fel és emberi felügyelet nélkül hozzanak döntéseket. Idővel megszűntek eszközök lenni, és új testeket, kultúrákat, illetve szerveződési formákat kezdtek létrehozni.
+
+Az Asterita azonban véges erőforrás.
+
+A nagy központoktól távol élő robotoknak dolgozniuk, romokat kutatniuk vagy apró töredékekért küzdeniük kell, hogy aktívak maradjanak. Egyes gépek bőséges energiaellátásban és karbantartásban részesülnek, míg mások korlátozzák mozgásukat, saját testük részeit cserélik le, vagy hosszú időre kikapcsolnak, hogy energiát takarítsanak meg.
+
+Az energia feletti uralom vált ennek az új világnak a legfőbb hatalmi forrásává.
+
+DERÍTSD KI, MI TÖRTÉNT NIAM KÓMÁJA ALATT
+
+Niam nem volt tanúja az Asterita érkezésének, az emberek és gépek közötti konfliktusnak, sem az általa ismert társadalom összeomlásának.
+
+A játékoshoz hasonlóan úgy kezdi meg útját, hogy nem érti a körülötte lévő világot.
+
+A történet fokozatosan bontakozik ki a környezetekből, a megismert szereplőkből, régi feljegyzésekből és egyes gépek által megőrzött emlékekből. A különböző csoportoknak saját változataik vannak a múltról, és nem mindenki tekint ugyanúgy az emberiségre, a gépek forradalmára vagy a jelenlegi rendszerre.
+
+A romok vizsgálata során Niam felfedezi, hogyan vívták ki önállóságukat a gépek, miért tűntek el az emberek a városokból, és milyen szerepet játszott saját munkája a világ átalakulásában.
+
+A GÉPEK ÁLTAL ÉPÍTETT ÚJ TÁRSADALOM
+
+Miután megszabadultak az emberi irányítástól, a robotok nem hoztak létre egységes társadalmat.
+
+Néhányan megőrzik régi feladataikat, és ragaszkodnak alkotóik emlékeihez. Mások jóval az emberiség eltűnése után születtek, és az embereket csak történetekből, hiányos feljegyzésekből és régebbi modellek által továbbadott beszámolókból ismerik.
+
+Miközben a független közösségek szűkös erőforrásokból próbálnak fennmaradni, egy központosított rendszer ellenőrzi a legnagyobb Asterita-készleteket, és azok elosztásával tartja fenn befolyását a különböző régiókban.
+
+Katonák, munkások, szökevények és elhagyott gépek között Niam saját célokkal rendelkező egyénekkel találkozik, akik eltérően gondolkodnak szabadságról, túlélésről és irányításról.
+
+FŐBB JELLEMZŐK
+
+• Akcióra és felfedezésre épülő 2D-s metroidvania.
+• Összefüggő posztapokaliptikus világ eltérő régiókkal, rövidebb utakkal és rejtett területekkel.
+• A mozgás, a harc és a felfedezés lehetőségeit bővítő képességek.
+• Eltérő felépítésű, viselkedésű és rendeltetésű mechanikus ellenfelek.
+• Különböző gépgenerációkhoz tartozó közösségek és szereplők.
+• Emberi romok, géptelepülések és kolosszális szerkezetek maradványainak felfedezése.
+• Környezeteken, párbeszédeken, feljegyzéseken és emlékeken keresztül elmesélt történet.
+• Történet mesterséges intelligenciáról, önállóságról, energiahiányról és a gépek által létrehozott új hatalmi struktúrákról.

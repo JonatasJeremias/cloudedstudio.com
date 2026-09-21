@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>2D Character Movement Pack — Documentation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --bg:#1b1d23; --panel:#22252c; --panel-2:#272a32; --text:#e6e8ee; --muted:#9aa1b1;
+    --accent:#5dd6c0; --accent-2:#7aa2ff; --border:#343844; --code-bg:#11131a;
+    --warn-bg:#3a2e16; --warn-border:#8a6a1f; --note-bg:#15293a; --note-border:#2b6ca3;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.6;}
+  a{color:var(--accent-2);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .layout{display:flex;min-height:100vh;}
+  nav.sidebar{
+    width:280px;flex:0 0 280px;background:var(--panel);border-right:1px solid var(--border);
+    padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  nav.sidebar .brand{padding:0 24px 16px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+  nav.sidebar .brand h1{font-size:16px;margin:0 0 4px;color:var(--text);}
+  nav.sidebar .brand span{font-size:12px;color:var(--muted);}
+  nav.sidebar ul{list-style:none;margin:0;padding:0;}
+  nav.sidebar li a{display:block;padding:7px 24px;font-size:13.5px;color:var(--muted);border-left:3px solid transparent;}
+  nav.sidebar li a:hover{color:var(--text);background:var(--panel-2);text-decoration:none;}
+  nav.sidebar li.section-title{padding:16px 24px 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;}
+  main{flex:1;max-width:880px;padding:48px 56px 120px;}
+  h1.page-title{font-size:30px;margin:0 0 6px;}
+  .subtitle{color:var(--muted);margin:0 0 36px;font-size:15px;}
+  section{margin-bottom:56px;}
+  section h2{font-size:22px;border-bottom:1px solid var(--border);padding-bottom:10px;margin:0 0 18px;scroll-margin-top:24px;}
+  section h3{font-size:17px;color:var(--accent-2);margin:28px 0 10px;scroll-margin-top:24px;}
+  section h4{font-size:14.5px;margin:18px 0 8px;color:var(--text);}
+  p{color:#cfd2dc;}
+  code{background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:13px;color:#ffd479;font-family:Consolas,Menlo,monospace;}
+  pre{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px 18px;overflow-x:auto;font-size:13px;font-family:Consolas,Menlo,monospace;color:#dfe3ee;}
+  pre code{background:none;padding:0;color:inherit;}
+  table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:13.5px;}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  th{color:var(--accent);font-weight:600;background:var(--panel-2);}
+  tr:hover td{background:rgba(255,255,255,0.02);}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:12px;background:var(--panel-2);border:1px solid var(--border);color:var(--muted);margin-left:6px;}
+  .note,.warn{border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;}
+  .note{background:var(--note-bg);border:1px solid var(--note-border);}
+  .warn{background:var(--warn-bg);border:1px solid var(--warn-border);}
+  .note strong, .warn strong{display:block;margin-bottom:4px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;}
+  .file-tree{font-family:Consolas,Menlo,monospace;font-size:13px;background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;color:#cfd2dc;white-space:pre;}
+  .step-list{padding-left:0;list-style:none;counter-reset:step;}
+  .step-list>li{position:relative;padding:0 0 18px 38px;counter-increment:step;}
+  .step-list>li::before{content:counter(step);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#10231f;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .grid-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+  .card{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;}
+  .card h4{margin:0 0 6px;color:var(--accent-2);}
+  .card p{margin:0;font-size:13.5px;color:var(--muted);}
+  footer{color:var(--muted);font-size:12.5px;border-top:1px solid var(--border);padding-top:18px;margin-top:60px;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:#3a3f4c;border-radius:6px;}
+  @media (max-width:900px){
+    .layout{flex-direction:column;}
+    nav.sidebar{position:relative;width:100%;height:auto;}
+    main{padding:32px 20px 80px;max-width:100%;}
+    .grid-cards{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <nav class="sidebar">
+    <div class="brand">
+      <h1>2D Character Movement Pack</h1>
+      <span>Player Systems — Documentation</span>
+      <div style="margin-top:10px;"><a href="index.pt-br.html">🇧🇷 Ler em Português</a></div>
+    </div>
+    <ul>
+      <li class="section-title">Getting Started</li>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#package-contents">Package Contents</a></li>
+      <li><a href="#quick-start">Quick Start</a></li>
+      <li><a href="#default-controls">Default Controls</a></li>
+      <li class="section-title">Setup Guides</li>
+      <li><a href="#movement-setup">Movement &amp; Jump</a></li>
+      <li><a href="#input-setup">Input Setup</a></li>
+      <li><a href="#dash-setup">Dash / Roll</a></li>
+      <li><a href="#animator-setup">Animator Setup</a></li>
+      <li><a href="#combat-setup">Combat &amp; Hitboxes</a></li>
+      <li><a href="#health-setup">Health &amp; Damage</a></li>
+      <li><a href="#fx-setup">Hit Feedback (FX)</a></li>
+      <li class="section-title">Reference</li>
+      <li><a href="#script-reference">Script Reference</a></li>
+      <li><a href="#interfaces">Extending: Interfaces</a></li>
+      <li><a href="#events">Events Cheat Sheet</a></li>
+      <li class="section-title">Help</li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#changelog">Changelog</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1 class="page-title">2D Character Movement Pack</h1>
+    <p class="subtitle">Complete player controller: movement, jump, dash, melee combo combat, health, hit reactions and hit feedback — ready to drop into your project.</p>
+
+    <section id="overview">
+      <h2>Overview</h2>
+      <p>
+        This pack gives you a fully working 2D player character: run/jump movement with air control,
+        a buffered jump and dash, a 2D melee combo system with hitboxes and damage, a health component
+        with knockback and defense hooks, hit-reaction animations, and lightweight "game feel" effects
+        (hit-stop, camera shake, time slow) — with zero third-party dependencies.
+      </p>
+      <p>
+        All scripts live under the namespace <code>CloudedStudio.CharacterPack2D</code> and are compiled
+        into their own assembly (<code>CloudedStudio.CharacterPack2D.asmdef</code>), so they won't slow down
+        your project's compile times and won't collide with your own class names.
+      </p>
+      <div class="note">
+        <strong>Who this is for</strong>
+        This documentation assumes basic familiarity with the Unity Editor (adding components, wiring
+        Inspector fields, Animation Events) and the new Input System package. No scripting is required
+        to get the default setup running — scripting is only needed if you want to extend the combat
+        system (e.g. your own enemy or defense component).
+      </div>
+    </section>
+
+    <section id="package-contents">
+      <h2>Package Contents</h2>
+      <div class="file-tree">Assets/Clouded Studio/2D Character Movement Pack/Scripts/
+├── Core/                          Shared contracts &amp; data types
+│   ├── DamageInfo.cs               Struct describing a single hit
+│   ├── IDamageable.cs              IDamageable + IKnockbackable interfaces
+│   ├── IDefendable.cs              IDefendable interface + DefenseResult
+│   ├── IVariableVulnerability.cs   IVariableVulnerability interface
+│   └── IFacingDirectionProvider.cs IFacingDirectionProvider interface
+├── Movement/
+│   ├── CharacterMovement.cs        Horizontal movement, acceleration, external forces
+│   ├── CharacterGroundChecker.cs   Ground detection + coyote time + dynamic friction
+│   ├── CharacterJump.cs            Buffered jump, variable jump height, air control
+│   ├── PlayerJump.cs               Player-specific jump subclass
+│   ├── CharacterDashRoll.cs        Buffered dash/roll with turn-interrupt
+│   └── CharacterInputController.cs Input System → movement/jump/dash/attack bridge
+├── Player/
+│   ├── PlayerController.cs        Player rig + combo state + facing direction
+│   └── PlayerHitCounter.cs        Consecutive-hit streak counter (for UI)
+├── Combat/
+│   ├── CharacterHitbox.cs         A single attack's trigger collider(s)
+│   ├── CharacterHitboxController.cs  Activates/deactivates hitboxes, mirrors on flip
+│   ├── MeleeDamageDealer.cs       Hitbox hit → damage + knockback pipeline
+│   ├── HealthComponent.cs         Health, damage, knockback, death events
+│   ├── PlayerHitSequence.cs       Plays the "Player-Hit" reaction animation on damage
+│   └── FX/
+│       ├── CameraShake2D.cs        Self-contained camera shake (no 3rd-party camera package)
+│       ├── HitImpactEffect.cs      Time-slow + shake when the player takes damage
+│       ├── HitConnectEffect.cs     Hit-stop + shake when the player's attack lands
+│       └── PlayerReceiveHitEffect.cs  VFX spawn when the player takes damage
+└── Animations/
+    └── PlayerAnimationStatesController.cs  Drives Animator parameters, hitbox Animation Events
+</div>
+    </section>
+
+    <section id="quick-start">
+      <h2>Quick Start</h2>
+      <p>The fastest path to a moving, jumping, attacking player. Each step is expanded later in its own section — follow the links if something isn't working.</p>
+      <ol class="step-list">
+        <li>Create a player GameObject with a <code>Rigidbody2D</code> (Body Type: Dynamic, Gravity Scale ~3-5, Freeze Rotation Z) and a trigger-free <code>Collider2D</code> for the body.</li>
+        <li>Add <strong>CharacterGroundChecker</strong>, <strong>CharacterMovement</strong>, <strong>PlayerJump</strong> and <strong>PlayerController</strong> — see <a href="#movement-setup">Movement &amp; Jump</a>.</li>
+        <li>Add a <code>PlayerInput</code> component (Input System package) and <strong>CharacterInputController</strong> — see <a href="#input-setup">Input Setup</a>.</li>
+        <li>Add an <code>Animator</code> with the required parameters and <strong>PlayerAnimationStatesController</strong> — see <a href="#animator-setup">Animator Setup</a>.</li>
+        <li>(Optional) Add <strong>CharacterDashRoll</strong> for a dash — see <a href="#dash-setup">Dash / Roll</a>.</li>
+        <li>Build your attack hitboxes as child objects and add <strong>CharacterHitboxController</strong> + <strong>MeleeDamageDealer</strong> — see <a href="#combat-setup">Combat &amp; Hitboxes</a>.</li>
+        <li>Add <strong>HealthComponent</strong> to the player (and to anything else that should be damageable) — see <a href="#health-setup">Health &amp; Damage</a>.</li>
+        <li>(Optional) Add the FX components for hit feedback — see <a href="#fx-setup">Hit Feedback</a>.</li>
+      </ol>
+    </section>
+
+    <section id="default-controls">
+      <h2>Default Controls</h2>
+      <p>The included demo scenes (<code>Demo/PlayerSampleScene.unity</code> and <code>Demo/PlayerPrototypeSampleScene.unity</code>) ship with a ready-to-use <code>PlayerInputs.inputactions</code> asset. These are the default keyboard bindings:</p>
+      <table>
+        <tr><th>Action</th><th>Keys</th></tr>
+        <tr><td>Move</td><td>Arrow Keys (Up / Down / Left / Right)</td></tr>
+        <tr><td>Jump</td><td>Z or Space</td></tr>
+        <tr><td>Attack</td><td>X</td></tr>
+        <tr><td>Dash</td><td>C</td></tr>
+      </table>
+      <p>These bindings are defined entirely inside <code>PlayerInputs.inputactions</code> — open it with the Input Actions editor if you want to add, remove or rebind any of them.</p>
+    </section>
+
+    <section id="movement-setup">
+      <h2>Movement &amp; Jump</h2>
+
+      <h3>Required components</h3>
+      <table>
+        <tr><th>Component</th><th>Purpose</th></tr>
+        <tr><td><code>Rigidbody2D</code></td><td>Required by everything below. Set Body Type to Dynamic, freeze Z rotation.</td></tr>
+        <tr><td><code>CharacterGroundChecker</code></td><td>Detects ground contact via Physics2D, with a coyote-time buffer.</td></tr>
+        <tr><td><code>CharacterMovement</code></td><td>Horizontal acceleration/deceleration and the "external force" API used by jump/dash/knockback.</td></tr>
+        <tr><td><code>PlayerJump</code></td><td>Buffered jump with variable height (cut short on release).</td></tr>
+        <tr><td><code>PlayerController</code></td><td>Aggregates the rig above and tracks combo/attack/facing state. Other scripts reference this one component instead of wiring each piece individually.</td></tr>
+      </table>
+
+      <h3>CharacterGroundChecker fields</h3>
+      <table>
+        <tr><th>Field</th><th>What it does</th></tr>
+        <tr><td>Ground Layer</td><td>LayerMask of what counts as "ground" — set this to your Ground/Platform layer(s).</td></tr>
+        <tr><td>Dynamic Friction</td><td>Leave on. Swaps the Rigidbody2D's PhysicsMaterial2D between a "grounded" and "airborne" material so the character doesn't stick to walls during a jump.</td></tr>
+        <tr><td>Airborne Physics Material 2D</td><td>A PhysicsMaterial2D with low/zero friction. Create one via <em>Assets &gt; Create &gt; 2D &gt; Physics Material 2D</em>.</td></tr>
+        <tr><td>Grounded Physics Material 2D</td><td>Your normal gameplay friction material (can be the same one already on the Rigidbody2D).</td></tr>
+      </table>
+      <div class="note">
+        <strong>Why two materials?</strong>
+        Box2D caches friction on a contact when it's created. Changing the existing material's
+        friction value at runtime does <em>not</em> make already-active contacts pick up the change —
+        which causes a player to feel "stuck" to a wall mid-jump. Swapping the material reference
+        forces Box2D to rebuild the contact and apply the new friction immediately.
+      </div>
+
+      <h3>CharacterMovement fields</h3>
+      <table>
+        <tr><th>Field</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Initial Speed</td><td>2</td><td>Speed snapped to instantly when starting to move from a standstill.</td></tr>
+        <tr><td>Max Speed</td><td>8</td><td>Top horizontal speed.</td></tr>
+        <tr><td>Acceleration</td><td>30</td><td>Units/second² applied while moving towards the target speed.</td></tr>
+        <tr><td>Deceleration Factor</td><td>1.5</td><td>Multiplier on Acceleration used when stopping (no input held).</td></tr>
+      </table>
+
+      <h3>PlayerJump / CharacterJump fields</h3>
+      <table>
+        <tr><th>Field</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Buffer Jump Window</td><td>0.15s</td><td>How long a jump press pressed slightly too early is remembered, executing as soon as landing/coyote conditions allow.</td></tr>
+        <tr><td>Jump Force</td><td>16.5</td><td>Upward velocity impulse on jump.</td></tr>
+        <tr><td>Cutting Factor</td><td>0.5</td><td>Multiplies remaining upward velocity when the jump button is released early — gives variable jump height.</td></tr>
+        <tr><td>Air Control Factor</td><td>0.8 (0-1)</td><td>How much horizontal acceleration applies when trying to reverse direction mid-air. 1 = full ground-like control, 0 = momentum can't be reversed in the air.</td></tr>
+      </table>
+      <p>Wire your jump button to call <code>PlayerJump.Jump()</code> on press and <code>PlayerJump.CutJump()</code> on release — this is handled automatically if you use <strong>CharacterInputController</strong> (see next section).</p>
+    </section>
+
+    <section id="input-setup">
+      <h2>Input Setup</h2>
+      <p><strong>CharacterInputController</strong> bridges Unity's Input System to the movement/jump/dash/attack components. It relies on the <code>PlayerInput</code> component's <strong>Send Messages</strong> notification behavior, so there is no manual event wiring.</p>
+      <ol class="step-list">
+        <li>Add a <code>PlayerInput</code> component (from the Input System package) to the player GameObject.</li>
+        <li>Set its <strong>Behavior</strong> to <code>Send Messages</code>.</li>
+        <li>
+          Assign (or create) an Input Actions asset with a <code>Player</code> action map containing these actions:
+          <table>
+            <tr><th>Action name</th><th>Type</th><th>Suggested binding</th></tr>
+            <tr><td><code>Move</code></td><td>Value / Vector2 (2D Vector composite, or a Gamepad stick)</td><td>WASD / Left Stick</td></tr>
+            <tr><td><code>Jump</code></td><td>Button — <strong>add a "Press" Interaction set to "Press and Release"</strong> (see note below)</td><td>Space / South Button</td></tr>
+            <tr><td><code>Dash</code></td><td>Button</td><td>Left Shift / East Button</td></tr>
+            <tr><td><code>Attack</code></td><td>Button</td><td>Left Mouse Button / West Button</td></tr>
+          </table>
+        </li>
+        <li>Add <strong>CharacterInputController</strong> to the same GameObject. Its reference fields auto-fill via <code>GetComponent</code> on Reset if left empty. Set <strong>Action Map Name</strong> to match the action map you created above (default: <code>"Player"</code>).</li>
+      </ol>
+      <div class="warn">
+        <strong>Jump needs a "Press and Release" interaction, or jump cutting won't work</strong>
+        A Button action with <strong>no Interaction assigned</strong> defaults to an implicit
+        <code>Press</code> interaction in <code>Press Only</code> mode. That mode only ever
+        reports the button as pressed — it never fires the action's Canceled phase on release,
+        so <code>OnJump</code> never receives <code>isPressed = false</code> and
+        <code>CharacterJump.CutJump()</code> is never called. The jump will always reach full
+        height no matter how briefly you tap the button.
+        <br/><br/>
+        <b>Fix:</b> select the <code>Jump</code> action, add a <code>Press</code> Interaction in
+        the Interactions panel, and set its <strong>Trigger Behavior</strong> to
+        <strong>Press and Release</strong> (not the default "Press Only"). This makes the action
+        report both the press and the release, which is what variable jump height needs.
+      </div>
+      <div class="note">
+        <strong>Renaming actions</strong>
+        If your project already has an Input Actions asset with different action names, you don't
+        need to rename them — just make sure the C# method names that PlayerInput's "Send Messages"
+        looks for match: <code>OnMove</code>, <code>OnJump</code>, <code>OnDash</code>, <code>OnAttack</code>.
+        These are exactly the four public methods <code>CharacterInputController</code> exposes, so as
+        long as your action map calls those names (Input Actions → action → "Name" field), it will work.
+      </div>
+      <div class="warn">
+        <strong>Behavior must be "Send Messages"</strong>
+        If <code>PlayerInput.Notification Behavior</code> is set to <code>Invoke Unity Events</code> or
+        <code>Invoke C# Events</code> instead, <code>CharacterInputController</code>'s methods won't be
+        called automatically. Either switch it to <code>Send Messages</code>, or wire the events manually
+        in the Inspector to call <code>OnMove</code>/<code>OnJump</code>/<code>OnDash</code>/<code>OnAttack</code>.
+      </div>
+
+      <h3>Using the Project-wide Input Actions asset</h3>
+      <p>
+        If you assign Unity's <strong>Project-wide Actions</strong> asset (Project Settings &gt;
+        Input System Package) to <code>PlayerInput</code>, the Inspector will warn:
+      </p>
+      <pre><code>Project-wide actions asset is not recommended to be used with Player Input
+because it is a singleton reference and all actions maps are enabled by
+default. You should manually disable all action maps on Start() and
+manually enable the default action map.</code></pre>
+      <p>
+        This happens because the Project-wide asset is a single shared instance, so by default
+        <em>every</em> action map on it (Player, UI, anything else you've defined) is active at
+        once — input meant for a menu could leak into gameplay and vice versa. This is a known
+        Input System behavior, not specific to this pack.
+      </p>
+      <p>
+        <strong>CharacterInputController already handles this for you:</strong> on enable, it
+        disables every action map on <code>PlayerInput.actions</code> and re-enables only the one
+        named in its <strong>Action Map Name</strong> field — exactly the workaround Unity's
+        warning recommends. You can safely ignore the warning once this component is present. If
+        you'd rather not see the warning at all, create a dedicated Input Actions asset for this
+        character instead of using the Project-wide one (Project Settings still lets other systems
+        use their own project-wide actions independently).
+      </p>
+    </section>
+
+    <section id="dash-setup">
+      <h2>Dash / Roll <span class="badge">optional</span></h2>
+      <p>Add <strong>CharacterDashRoll</strong> to the player (it requires <code>CharacterMovement</code> and <code>CharacterJump</code> on the same GameObject). Triggered automatically by the <code>Dash</code> input action if you're using <strong>CharacterInputController</strong>, or call <code>CharacterDashRoll.TriggerDash()</code> yourself.</p>
+      <table>
+        <tr><th>Field</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Dash Speed Multiplier</td><td>2</td><td>Dash speed = <code>CharacterMovement.MaxSpeed × this value</code>.</td></tr>
+        <tr><td>Dash Duration</td><td>0.3s</td><td>How long the dash lasts before control returns to normal movement.</td></tr>
+        <tr><td>Buffer Dash Window</td><td>0.15s</td><td>If Dash is pressed mid-air, the input is remembered for this long — landing within the window auto-executes the dash.</td></tr>
+        <tr><td>Player <span class="badge">ref</span></td><td>auto</td><td>Used to read facing direction for the dash's direction. Auto-fills via GetComponent.</td></tr>
+      </table>
+      <p>Pressing the opposite direction mid-dash interrupts it early and fires the <code>DashTurn</code>/<code>DashTurnBack</code> Animator triggers (see next section).</p>
+    </section>
+
+    <section id="animator-setup">
+      <h2>Animator Setup</h2>
+      <p><strong>PlayerAnimationStatesController</strong> drives your Animator Controller's parameters every frame from movement/combat state, and exposes methods you call from Animation Events to drive hitboxes. Add it to the player alongside an <code>Animator</code> component.</p>
+
+      <h3>Required parameters</h3>
+      <table>
+        <tr><th>Parameter</th><th>Type</th><th>Set when</th></tr>
+        <tr><td><code>IsRunning</code></td><td>Bool</td><td>Horizontal input is held and movement isn't disabled.</td></tr>
+        <tr><td><code>IsFalling</code></td><td>Bool</td><td>Vertical velocity is negative and airborne.</td></tr>
+        <tr><td><code>IsGrounded</code></td><td>Bool</td><td>Mirrors <code>CharacterGroundChecker.IsGrounded</code>.</td></tr>
+        <tr><td><code>WantsJump</code></td><td>Bool</td><td>Vertical velocity is positive and airborne (rising).</td></tr>
+        <tr><td><code>XVelocity</code></td><td>Float</td><td>Absolute horizontal velocity — drive a blend tree with this.</td></tr>
+        <tr><td><code>IsBufferedJump</code></td><td>Bool</td><td>True while a jump press is buffered, waiting to land.</td></tr>
+        <tr><td><code>Dash</code> <span class="badge">if using dash</span></td><td>—</td><td><code>CharacterDashRoll</code> calls <code>Animator.Play("Player-Roll")</code> directly — name your roll state "Player-Roll", or change the string in <code>CharacterDashRoll.ExecuteDash()</code>.</td></tr>
+        <tr><td><code>DashTurn</code> / <code>DashTurnBack</code> <span class="badge">if using dash</span></td><td>Trigger</td><td>Fired when a turn input interrupts the dash.</td></tr>
+        <tr><td><code>Player-Hit</code> <span class="badge">if using PlayerHitSequence</span></td><td>—</td><td><code>PlayerHitSequence</code> calls <code>Animator.Play("Player-Hit")</code> directly on every effective hit — name your hit-reaction state "Player-Hit", or change <code>hitStateName</code> on the component.</td></tr>
+      </table>
+      <p>
+        Attacks, turning and running aren't driven by Trigger parameters — <code>PlayerAnimationStatesController</code>
+        calls <code>Animator.Play(...)</code> directly on a relay state for attacks, and on the
+        "Player-Turn" / "Player-TurnBack" / "Player-Run" states for facing changes. Name those
+        states accordingly (or update the corresponding <code>Animator.StringToHash(...)</code>
+        calls in the script if you'd rather use your own names).
+      </p>
+
+      <h3>Attack States &amp; Movement Lock</h3>
+      <table>
+        <tr><th>Field</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Attack State Tag</td><td><code>Attack</code></td><td>The Animator <strong>Tag</strong> (set per-state in the state's Inspector, not a parameter) that every attack state must have. Used to detect "currently attacking" regardless of which combo step is playing.</td></tr>
+        <tr><td>Attack Combo Accept Window</td><td>0.85</td><td>Normalized progress (0-1) through the current attack clip after which a new attack input is allowed to interrupt it and advance the combo. Before this point, attack input is ignored so the current swing always finishes (or reaches its cancel window) first.</td></tr>
+      </table>
+      <div class="note">
+        <strong>The player can't move while attacking</strong>
+        Every state tagged with <strong>Attack State Tag</strong> automatically disables the
+        player's horizontal movement input the instant it's entered, and re-enables it the
+        instant it's exited — attacks always root the player in place. Tag <em>only</em> your
+        attack states this way; tagging anything else (e.g. a hit-reaction or dash state) would
+        also lock movement for as long as that state plays.
+      </div>
+
+      <h3>Hitbox Animation Events</h3>
+      <p>
+        <strong>PlayerAnimationStatesController</strong> exposes two generic methods —
+        <code>ActivateHitbox(string hitboxId)</code> and <code>DeactivateHitbox(string hitboxId)</code> —
+        instead of one hardcoded method pair per attack. Add an Animation Event on each attack
+        clip at the frame the hitbox should turn on, pick <code>ActivateHitbox</code> from the
+        function list, and type the hitbox's <code>Id</code> (e.g. <code>Punch01</code>) into
+        the event's <strong>string</strong> parameter field. Add a second event at the frame it
+        should turn off, picking <code>DeactivateHitbox</code> with the same Id string.
+      </p>
+      <div class="note">
+        <strong>Why a string parameter instead of a method per attack</strong>
+        Animation Events can carry a single string/float/int/Object argument, so a generic
+        <code>ActivateHitbox("Punch01")</code> works for any attack you define — including ones
+        you add after buying this pack — without ever touching <code>PlayerAnimationStatesController</code>'s
+        code. Add a new <code>CharacterHitbox</code> child with a new Id, wire up two Animation
+        Events with that Id as the string parameter, and you're done.
+      </div>
+      <p>These Id strings match the hitbox <code>Id</code> strings used in <a href="#combat-setup">Combat &amp; Hitboxes</a> below — they're exactly the same value, just typed into the Animation Event's parameter field instead of a method name.</p>
+    </section>
+
+    <section id="combat-setup">
+      <h2>Combat &amp; Hitboxes</h2>
+
+      <h3>1. Build the hitbox hierarchy</h3>
+      <p>Create one child GameObject per attack under the player, each with a <code>CharacterHitbox</code> component and one or more trigger <code>Collider2D</code> shapes sized for that attack:</p>
+      <div class="file-tree">Player
+├── Hitbox_Punch01   (BoxCollider2D, Is Trigger ✓)   Id = "Punch01"
+├── Hitbox_Punch02   (BoxCollider2D, Is Trigger ✓)   Id = "Punch02"
+├── Hitbox_Punch03   (BoxCollider2D, Is Trigger ✓)   Id = "Punch03"
+└── Hitbox_Punch04   (2x BoxCollider2D, Is Trigger ✓) Id = "Punch04"  ← multiple colliders, one attack</div>
+      <table>
+        <tr><th>Field</th><th>What it does</th></tr>
+        <tr><td>Id</td><td>String matched against <code>CharacterHitboxController.Activate(id)</code> calls — must be unique per hitbox.</td></tr>
+        <tr><td>Target Layers</td><td>LayerMask of what this hitbox is allowed to hit (e.g. your Enemy layer).</td></tr>
+      </table>
+      <p><code>CharacterHitbox</code> automatically sets all its colliders to <code>isTrigger = true</code> and starts deactivated; you don't need to disable the colliders by hand.</p>
+
+      <h3>2. Add the controller and damage dealer</h3>
+      <p>On the player root (same GameObject as <strong>PlayerController</strong>), add:</p>
+      <table>
+        <tr><th>Component</th><th>Purpose</th></tr>
+        <tr><td><code>CharacterHitboxController</code></td><td>Collects all child <code>CharacterHitbox</code> components, exposes Activate/Deactivate by Id, and mirrors hitbox X offsets when the player turns.</td></tr>
+        <tr><td><code>MeleeDamageDealer</code></td><td>Listens for hits and applies damage/knockback to whatever the hitbox touched.</td></tr>
+      </table>
+      <p><code>CharacterHitboxController</code> auto-collects its <code>CharacterHitbox</code> children if the array is left empty in the Inspector — you only need to drag them in manually if you want a specific subset.</p>
+
+      <h3>3. Configure damage per attack</h3>
+      <p>On <strong>MeleeDamageDealer</strong>, set a default damage/knockback/type, then optionally add per-hitbox overrides:</p>
+      <table>
+        <tr><th>Field</th><th>What it does</th></tr>
+        <tr><td>Default Damage</td><td>Used for any hitbox Id without an explicit entry below.</td></tr>
+        <tr><td>Default Knockback</td><td>Vector2. X = horizontal force (always positive — direction is resolved automatically from attacker/target positions). Y = vertical force, positive = upward.</td></tr>
+        <tr><td>Default Damage Type</td><td>Physical / Magic / Fire — extend the <code>DamageType</code> enum in <code>Core/DamageInfo.cs</code> if you need more.</td></tr>
+        <tr><td>Hitbox Configs</td><td>Array of overrides: <code>HitboxId</code> (must match the <code>CharacterHitbox.Id</code> exactly), <code>Damage</code>, <code>Knockback</code>, <code>DamageType</code>.</td></tr>
+      </table>
+      <div class="note">
+        <strong>Example knockback values</strong>
+        <code>(5, 0)</code> — pure horizontal push. <code>(3, 8)</code> — launches the target up and sideways. <code>(0, 10)</code> — straight uppercut.
+      </div>
+
+      <h3>4. Make targets damageable</h3>
+      <p>Any GameObject the hitboxes should affect needs a <code>HealthComponent</code> (or your own component implementing <code>IDamageable</code>) and ideally a <code>Rigidbody2D</code> if you want knockback to apply (<code>HealthComponent</code> implements <code>IKnockbackable</code> already).</p>
+
+      <h3>Full hit pipeline</h3>
+      <pre><code>CharacterHitbox (OnTriggerEnter2D)
+   → CharacterHitboxController.OnAnyHit
+       → MeleeDamageDealer.OnAnyHit
+           → IDamageable.TakeDamage(DamageInfo)      on the target
+           → IKnockbackable.ApplyKnockback(...)      on the target, if it implements it
+           → CharacterHitboxController.NotifyHitProcessed(...)
+               → anything listening to OnHitProcessed (PlayerHitCounter, HitConnectEffect, ...)</code></pre>
+    </section>
+
+    <section id="health-setup">
+      <h2>Health &amp; Damage</h2>
+      <p>Add <strong>HealthComponent</strong> to the player and to any enemy/destructible that should be able to take damage.</p>
+      <table>
+        <tr><th>Field</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Max Health</td><td>100</td><td>Starting and maximum health value.</td></tr>
+        <tr><td>Destroy On Death</td><td>true</td><td>Automatically destroys the GameObject when health reaches zero. Turn off for the player if you handle death/respawn yourself.</td></tr>
+      </table>
+
+      <h3>Reacting to health events</h3>
+      <p>Other systems should subscribe to events instead of polling — for example a health bar UI:</p>
+      <pre><code>void Start()
+{
+    var health = player.GetComponent&lt;HealthComponent&gt;();
+    health.OnHealthChanged += (current, max) =&gt; healthBar.fillAmount = current / max;
+    health.OnDied += info =&gt; PlayDeathSequence();
+}</code></pre>
+
+      <h3>Optional: combo / hit sequencing on the player</h3>
+      <table>
+        <tr><th>Component</th><th>Adds</th></tr>
+        <tr><td><code>PlayerHitSequence</code></td><td>Plays the "Player-Hit" reaction animation on every effective hit (see Animator parameters above).</td></tr>
+        <tr><td><code>PlayerHitCounter</code></td><td>Tracks a consecutive-hit streak for a combo/score UI. Resets on timeout or when the player takes damage.</td></tr>
+      </table>
+
+      <h3>Invulnerability &amp; defense (extension points)</h3>
+      <p>
+        <code>HealthComponent.TakeDamage</code> automatically checks for an <code>IVariableVulnerability</code>
+        component (e.g. <strong>PlayerController</strong>, which already implements it via <code>Invulnerable()</code>/<code>Vulnerable()</code>)
+        and an <code>IDefendable</code> component on the same GameObject, if present. Call
+        <code>PlayerController.Invulnerable()</code> during a dash or hit-stun window to make the player
+        immune to damage, then <code>Vulnerable()</code> to restore it. See <a href="#interfaces">Extending: Interfaces</a>
+        for how to add your own block/parry component via <code>IDefendable</code>.
+      </p>
+    </section>
+
+    <section id="fx-setup">
+      <h2>Hit Feedback (FX) <span class="badge">optional</span></h2>
+      <p>These add "game feel" on top of the combat pipeline above. None of them are required for combat to function — they only react to events already being fired.</p>
+
+      <h3>CameraShake2D</h3>
+      <p>A small self-contained shake — no Cinemachine or other camera package required. Add it to whichever Transform should actually move (your <code>Camera</code>, or a Cinemachine virtual camera's Transform if you do use Cinemachine).</p>
+      <table>
+        <tr><th>Field</th><th>What it does</th></tr>
+        <tr><td>Target</td><td>Transform to shake. Defaults to its own GameObject if left empty.</td></tr>
+      </table>
+      <p>Call <code>cameraShake.Shake(amplitude, duration)</code> yourself, or assign it to the fields below so the included effects drive it automatically.</p>
+
+      <h3>HitImpactEffect <span class="badge">player takes damage</span></h3>
+      <p>Add to the same GameObject as <strong>HealthComponent</strong> (the player). Plays a brief time-slow plus a camera shake whenever the player takes effective damage.</p>
+      <table>
+        <tr><th>Field</th><th>Default</th></tr>
+        <tr><td>Slow Time Scale</td><td>0.15</td></tr>
+        <tr><td>Slow Duration / Slow Recovery</td><td>0.08s / 0.35s</td></tr>
+        <tr><td>Shake Amplitude / Shake Recovery</td><td>3 / 0.4s</td></tr>
+        <tr><td>Camera Shake</td><td>Drag your <code>CameraShake2D</code> here. Leave empty to skip the shake.</td></tr>
+      </table>
+
+      <h3>HitConnectEffect <span class="badge">player's attack lands</span></h3>
+      <p>Add to the same GameObject as <strong>CharacterHitboxController</strong> (the player). More subtle than HitImpactEffect since it fires far more often — a short hit-stop plus a small shake, and optional VFX prefabs.</p>
+      <table>
+        <tr><th>Field</th><th>Default</th></tr>
+        <tr><td>Hit Stop Time Scale / Duration</td><td>0.05 / 0.05s</td></tr>
+        <tr><td>Shake Amplitude / Recovery</td><td>1.2 / 0.15s</td></tr>
+        <tr><td>Hit VFX Prefab</td><td>Instantiated at the target's position on a normal hit.</td></tr>
+        <tr><td>Blocked Hit VFX Prefab</td><td>Instantiated instead if the target defended (see <code>IDefendable</code>).</td></tr>
+      </table>
+
+      <h3>PlayerReceiveHitEffect <span class="badge">player takes damage, receiver's perspective</span></h3>
+      <p>Add to the player alongside <strong>HealthComponent</strong>. Spawns a VFX prefab at (or near) the player when they take damage — distinct from HitConnectEffect, which is the attacker's perspective.</p>
+      <table>
+        <tr><th>Field</th><th>What it does</th></tr>
+        <tr><td>Hit VFX Prefab</td><td>Instantiated on effective damage, oriented opposite to the hit direction (a "splash" effect).</td></tr>
+        <tr><td>Spawn Offset</td><td>Local offset from the player's position — use to align with the torso.</td></tr>
+      </table>
+
+      <div class="note">
+        <strong>What was intentionally left out</strong>
+        The original effects this pack is based on also drove a URP Volume Vignette/Chromatic
+        Aberration override and a Cinemachine noise-based shake. To keep this pack dependency-free,
+        the Cinemachine shake was replaced with the self-contained <code>CameraShake2D</code> above, and
+        the URP Volume overrides were removed rather than reimplemented (they require a specific
+        Volume profile setup tied to URP). If you use URP and Cinemachine, you can re-add those by
+        subscribing your own script to <code>HealthComponent.OnDamaged</code> /
+        <code>CharacterHitboxController.OnHitProcessed</code> — see the <a href="#events">Events Cheat Sheet</a>.
+      </div>
+    </section>
+
+    <section id="script-reference">
+      <h2>Script Reference</h2>
+
+      <h3>Core</h3>
+      <table>
+        <tr><th>Script</th><th>Type</th><th>Summary</th></tr>
+        <tr><td>DamageInfo</td><td>struct</td><td>Amount, source, type, direction and knockback for a single hit.</td></tr>
+        <tr><td>IDamageable</td><td>interface</td><td>CurrentHealth / MaxHealth / IsDead / TakeDamage(DamageInfo).</td></tr>
+        <tr><td>IKnockbackable</td><td>interface</td><td>ApplyKnockback(direction, knockback).</td></tr>
+        <tr><td>IDefendable</td><td>interface</td><td>TryDefend(DamageInfo) → DefenseResult. Implement for your own block/parry.</td></tr>
+        <tr><td>IVariableVulnerability</td><td>interface</td><td>IsInvulnerable — checked by HealthComponent before applying damage.</td></tr>
+        <tr><td>IFacingDirectionProvider</td><td>interface</td><td>FacingDir (+1/-1). Implemented by <code>PlayerController</code>; read by <code>CharacterHitboxController</code> to mirror hitboxes on turn — implement it on your own character type to use the hitbox system without depending on <code>PlayerController</code>.</td></tr>
+      </table>
+
+      <h3>Movement</h3>
+      <table>
+        <tr><th>Script</th><th>Summary</th></tr>
+        <tr><td>CharacterMovement</td><td>Horizontal acceleration/deceleration, speed/air-control multipliers, and the external-force API (<code>ApplyConstantExternalForce</code>, <code>FreezeInAir</code>, etc.) used by jump, dash and knockback.</td></tr>
+        <tr><td>CharacterGroundChecker</td><td>Grounded detection with coyote time and dynamic friction swapping.</td></tr>
+        <tr><td>CharacterJump</td><td>Buffered, variable-height jump. Base class — subclass it for non-player characters.</td></tr>
+        <tr><td>PlayerJump</td><td>Player-facing subclass of CharacterJump.</td></tr>
+        <tr><td>CharacterDashRoll</td><td>Buffered dash with turn-interrupt.</td></tr>
+        <tr><td>CharacterInputController</td><td>Input System "Send Messages" bridge: OnMove / OnJump / OnDash / OnAttack.</td></tr>
+      </table>
+
+      <h3>Player</h3>
+      <table>
+        <tr><th>Script</th><th>Summary</th></tr>
+        <tr><td>PlayerController</td><td>Aggregates the rig, tracks combo state (<code>AttackCombo</code>), attack/defend flags, facing direction, invulnerability. The main reference point for other scripts.</td></tr>
+        <tr><td>PlayerHitCounter</td><td>Consecutive-hit streak with timeout, for UI.</td></tr>
+      </table>
+
+      <h3>Combat</h3>
+      <table>
+        <tr><th>Script</th><th>Summary</th></tr>
+        <tr><td>CharacterHitbox</td><td>One attack's trigger collider(s) + OnHit event.</td></tr>
+        <tr><td>CharacterHitboxController</td><td>Activate/Deactivate by Id, OnAnyHit / OnHitProcessed events, flip mirroring.</td></tr>
+        <tr><td>MeleeDamageDealer</td><td>Resolves damage/knockback per hitbox Id and applies it via IDamageable/IKnockbackable.</td></tr>
+        <tr><td>HealthComponent</td><td>Health, damage resolution (defense + invulnerability checks), knockback, death/heal events.</td></tr>
+        <tr><td>PlayerHitSequence</td><td>Plays the "Player-Hit" Animator state on every effective hit taken.</td></tr>
+      </table>
+
+      <h3>Combat/FX</h3>
+      <table>
+        <tr><th>Script</th><th>Summary</th></tr>
+        <tr><td>CameraShake2D</td><td>Self-contained decaying-noise camera shake.</td></tr>
+        <tr><td>HitImpactEffect</td><td>Time-slow + shake when the player takes damage.</td></tr>
+        <tr><td>HitConnectEffect</td><td>Hit-stop + shake + VFX when the player's attack lands.</td></tr>
+        <tr><td>PlayerReceiveHitEffect</td><td>VFX spawn when the player takes damage.</td></tr>
+      </table>
+
+      <h3>Animations</h3>
+      <table>
+        <tr><th>Script</th><th>Summary</th></tr>
+        <tr><td>PlayerAnimationStatesController</td><td>Drives Animator parameters every frame, exposes hitbox Activate/Deactivate methods for Animation Events.</td></tr>
+      </table>
+    </section>
+
+    <section id="interfaces">
+      <h2>Extending: Interfaces</h2>
+      <p>The combat system is built around small interfaces in <code>Core/</code> so you can add new entity types (enemies, breakables, shields) without touching the pack's scripts.</p>
+
+      <h3>Make something damageable without using HealthComponent</h3>
+      <pre><code>using CloudedStudio.CharacterPack2D.Core;
+
+public class BreakableCrate : MonoBehaviour, IDamageable
+{
+    [SerializeField] private float maxHealth = 20f;
+    private float current;
+
+    public float CurrentHealth =&gt; current;
+    public float MaxHealth =&gt; maxHealth;
+    public bool IsDead =&gt; current &lt;= 0f;
+
+    private void Awake() =&gt; current = maxHealth;
+
+    public float TakeDamage(DamageInfo info)
+    {
+        float applied = Mathf.Min(info.Amount, current);
+        current -= applied;
+        if (IsDead) Destroy(gameObject);
+        return applied;
+    }
+}</code></pre>
+
+      <h3>Add a block/parry component</h3>
+      <p>Implement <code>IDefendable</code> on the same GameObject as <code>HealthComponent</code> — it will be consulted automatically before damage is applied:</p>
+      <pre><code>using CloudedStudio.CharacterPack2D.Core;
+
+public class ShieldBlock : MonoBehaviour, IDefendable
+{
+    public bool IsBlocking;
+    [Range(0f, 1f)] public float DamageReduction = 1f; // 1 = full block
+
+    public DefenseResult TryDefend(DamageInfo info)
+    {
+        return IsBlocking
+            ? DefenseResult.Success(info.Amount, DamageReduction)
+            : DefenseResult.Failed(info.Amount);
+    }
+}</code></pre>
+
+      <h3>Custom invulnerability</h3>
+      <p><code>PlayerController</code> already implements <code>IVariableVulnerability</code>. For a non-player entity, implement it yourself:</p>
+      <pre><code>using CloudedStudio.CharacterPack2D.Core;
+
+public class EnemyController : MonoBehaviour, IVariableVulnerability
+{
+    public bool IsInvulnerable { get; private set; }
+    public void SetInvulnerable(bool value) =&gt; IsInvulnerable = value;
+}</code></pre>
+    </section>
+
+    <section id="events">
+      <h2>Events Cheat Sheet</h2>
+      <table>
+        <tr><th>Event</th><th>Raised by</th><th>Signature</th><th>Fires when</th></tr>
+        <tr><td>OnDirectionChanged</td><td>CharacterMovement</td><td>(Vector2 newInput, Vector2 previousInput)</td><td>Movement input vector changes.</td></tr>
+        <tr><td>OnGroundedChanged</td><td>CharacterGroundChecker</td><td>(GroundChangedEvent)</td><td>Grounded state flips.</td></tr>
+        <tr><td>OnAnyHit</td><td>CharacterHitboxController</td><td>(string hitboxId, GameObject target)</td><td>A hitbox overlaps a valid target, before damage is resolved.</td></tr>
+        <tr><td>OnHitProcessed</td><td>CharacterHitboxController</td><td>(string hitboxId, GameObject target, bool wasDefended)</td><td>After damage has been resolved for that hit.</td></tr>
+        <tr><td>OnDamaged</td><td>HealthComponent</td><td>(DamageInfo info, float effectiveDamage)</td><td>Damage is applied (effectiveDamage may be 0 if fully blocked).</td></tr>
+        <tr><td>OnDied</td><td>HealthComponent</td><td>(DamageInfo info)</td><td>Health reaches zero.</td></tr>
+        <tr><td>OnHealthChanged</td><td>HealthComponent</td><td>(float current, float max)</td><td>Health changes for any reason (damage or Heal()).</td></tr>
+        <tr><td>OnCountChanged / OnTimerChanged / OnReset</td><td>PlayerHitCounter</td><td>(int) / (float) / ()</td><td>Hit-streak count changes / every frame while active / streak resets.</td></tr>
+      </table>
+    </section>
+
+    <section id="troubleshooting">
+      <h2>Troubleshooting</h2>
+
+      <h4>The player won't jump, or jumps inconsistently.</h4>
+      <p>Check that <strong>Ground Layer</strong> on <code>CharacterGroundChecker</code> includes your ground/platform layers, and that the player's <code>Collider2D</code> isn't set to trigger. If the player sticks to walls during a jump, make sure both PhysicsMaterial2D fields are assigned and <strong>Dynamic Friction</strong> is enabled.</p>
+
+      <h4>CharacterInputController's methods never get called.</h4>
+      <p>Confirm the <code>PlayerInput</code> component's <strong>Behavior</strong> is set to <code>Send Messages</code>, and that your action map's actions are literally named <code>Move</code>, <code>Jump</code>, <code>Dash</code>, <code>Attack</code> (PlayerInput derives the message name — <code>OnMove</code>, etc. — from the action name).</p>
+
+      <h4>The jump always reaches the same height, even if I tap the button briefly.</h4>
+      <p>
+        This means <code>OnJump</code> is only ever receiving the press, never the release.
+        Confirm with a quick test: temporarily add <code>Debug.Log(value.isPressed)</code> inside
+        <code>CharacterInputController.OnJump</code> — if the Console only ever shows
+        <code>True</code> and never <code>False</code>, the <code>Jump</code> action has no
+        Interaction assigned, which defaults to an implicit <code>Press</code> interaction in
+        <code>Press Only</code> mode (no Canceled phase on release). Add a <code>Press</code>
+        Interaction to the <code>Jump</code> action and set its Trigger Behavior to
+        <strong>Press and Release</strong> — see the warning in <a href="#input-setup">Input Setup</a>.
+      </p>
+
+      <h4>Hitboxes never deal damage.</h4>
+      <p>Check, in order: the hitbox's <strong>Target Layers</strong> includes the target's layer; the target has a <code>Rigidbody2D</code> or the hitbox's collider can resolve the target's root GameObject directly; the target has a component implementing <code>IDamageable</code> (e.g. <code>HealthComponent</code>); the Animation Event is actually calling <code>Activate("YourId")</code> at the right frame (scrub the clip in the Animation window to verify).</p>
+
+      <h4>Animator parameters throw "parameter does not exist" warnings.</h4>
+      <p>Add every parameter listed in <a href="#animator-setup">Animator Setup</a> to your Animator Controller — <code>PlayerAnimationStatesController</code> sets them every frame regardless of whether your state machine currently uses them.</p>
+
+      <h4>Damage isn't reduced even though I attached a defense/invulnerability component.</h4>
+      <p><code>HealthComponent</code> looks up <code>IDefendable</code> / <code>IVariableVulnerability</code> via <code>GetComponent</code> on its <em>own</em> GameObject — make sure your custom component is on the same GameObject as <code>HealthComponent</code>, not a child or parent.</p>
+
+      <h4>Time.timeScale gets stuck below 1.</h4>
+      <p>This can happen if a GameObject with <code>HitImpactEffect</code> or <code>HitConnectEffect</code> is destroyed mid-effect outside of normal play (e.g. stopping Play Mode while a coroutine is running). Both scripts reset <code>Time.timeScale</code> in <code>OnDestroy</code>, but if you see it stuck after a hard stop, just re-enter and exit Play Mode once.</p>
+    </section>
+
+    <section id="faq">
+      <h2>FAQ</h2>
+
+      <h4>Do I need the Input System package?</h4>
+      <p>Only if you use <code>CharacterInputController</code>. Every other script reacts to plain method calls (<code>Jump()</code>, <code>TriggerDash()</code>, <code>SetMovementInput(...)</code>, <code>SetAttack()</code>) — wire those from the legacy Input Manager or your own input solution if you prefer.</p>
+
+      <h4>Can I use this for an enemy instead of the player?</h4>
+      <p>Movement/jump/dash/combat scripts are not player-locked except <code>PlayerController</code>, <code>PlayerJump</code>, <code>PlayerHitCounter</code>, <code>PlayerHitSequence</code> and <code>PlayerAnimationStatesController</code>, which assume a single controlled character. For an enemy, drive <code>CharacterMovement</code>/<code>CharacterJump</code>/<code>CharacterHitboxController</code>/<code>MeleeDamageDealer</code> directly from your AI script instead of from <code>PlayerController</code>.</p>
+
+      <h4>How do I add a 5th combo attack?</h4>
+      <p>Increase <strong>Combo Length</strong> on <code>PlayerController</code>, add the new <code>CharacterHitbox</code> child + Animator state + Animation Events, and add a matching Activate/Deactivate method pair in <code>PlayerAnimationStatesController</code> following the existing pattern.</p>
+
+      <h4>Why is there no target-lock / lunge-to-enemy system?</h4>
+      <p>That's intentionally out of scope for this pack — it's a general-purpose 2D character controller, not tied to any specific targeting design. Build your own targeting on top of <code>MeleeDamageDealer</code>'s pipeline if your game needs it.</p>
+    </section>
+
+    <section id="changelog">
+      <h2>Changelog</h2>
+      <table>
+        <tr><th>Version</th><th>Notes</th></tr>
+        <tr><td>1.0</td><td>Initial release: movement, jump, dash, combo melee combat, health/damage, hit reactions, hit feedback FX.</td></tr>
+      </table>
+    </section>
+
+    <footer>2D Character Movement Pack — Clouded Studio. Namespace: <code>CloudedStudio.CharacterPack2D</code>.</footer>
+  </main>
+</div>
+</body>
+</html>

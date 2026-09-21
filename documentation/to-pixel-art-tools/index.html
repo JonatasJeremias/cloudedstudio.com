@@ -1,0 +1,2141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>To Pixel Art Tools — Documentation</title>
+<meta name="description" content="Complete documentation for To Pixel Art Tools, a native Unity editor tool for converting any image into pixel art.">
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tokens
+   Neutrals carry a slight indigo bias so they read as chosen
+   rather than inherited. Amber is the single accent: the colour
+   an editor uses for "this is the active thing". Green and coral
+   are semantic only and never stand in for the accent.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper:        #F6F6F9;
+  --paper-sunk:   #ECECF2;
+  --paper-raised: #FFFFFF;
+  --ink:          #12141C;
+  --ink-soft:     #3B4050;
+  --muted:        #6C7185;
+  --rule:         #DCDCE6;
+  --rule-strong:  #C3C3D2;
+
+  --accent:       #B87616;
+  --accent-bright:#E09A2B;
+  --accent-wash:  #FBF1DF;
+
+  --tip:          #3F7A4D;
+  --tip-wash:     #E9F2EA;
+  --warn:         #B4432F;
+  --warn-wash:    #FAEAE6;
+
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", "JetBrains Mono", "Fira Mono", Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --rail: 17rem;
+  --measure: 74ch;
+
+  --step--1: 0.8125rem;
+  --step-0:  1rem;
+  --step-1:  1.1875rem;
+  --step-2:  1.4375rem;
+  --step-3:  1.875rem;
+  --step-4:  2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:        #12141C;
+    --paper-sunk:   #0C0E15;
+    --paper-raised: #1A1D28;
+    --ink:          #E7E8EF;
+    --ink-soft:     #BCBFCD;
+    --muted:        #878DA1;
+    --rule:         #282C3A;
+    --rule-strong:  #3A3F52;
+
+    --accent:       #E09A2B;
+    --accent-bright:#F0B44C;
+    --accent-wash:  #241D0F;
+
+    --tip:          #79B487;
+    --tip-wash:     #141E17;
+    --warn:         #E58873;
+    --warn-wash:    #241412;
+  }
+}
+
+/* The viewer's own toggle stamps data-theme on the root and must
+   win over the media query in both directions. */
+:root[data-theme="light"] {
+  --paper:        #F6F6F9;
+  --paper-sunk:   #ECECF2;
+  --paper-raised: #FFFFFF;
+  --ink:          #12141C;
+  --ink-soft:     #3B4050;
+  --muted:        #6C7185;
+  --rule:         #DCDCE6;
+  --rule-strong:  #C3C3D2;
+  --accent:       #B87616;
+  --accent-bright:#E09A2B;
+  --accent-wash:  #FBF1DF;
+  --tip:          #3F7A4D;
+  --tip-wash:     #E9F2EA;
+  --warn:         #B4432F;
+  --warn-wash:    #FAEAE6;
+}
+
+:root[data-theme="dark"] {
+  --paper:        #12141C;
+  --paper-sunk:   #0C0E15;
+  --paper-raised: #1A1D28;
+  --ink:          #E7E8EF;
+  --ink-soft:     #BCBFCD;
+  --muted:        #878DA1;
+  --rule:         #282C3A;
+  --rule-strong:  #3A3F52;
+  --accent:       #E09A2B;
+  --accent-bright:#F0B44C;
+  --accent-wash:  #241D0F;
+  --tip:          #79B487;
+  --tip-wash:     #141E17;
+  --warn:         #E58873;
+  --warn-wash:    #241412;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-underline-offset: 0.18em; }
+a:hover { color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--accent-bright);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Masthead
+   ───────────────────────────────────────────────────────────── */
+.masthead {
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-raised);
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1.5rem 2rem;
+}
+
+.wordmark { display: flex; align-items: center; gap: 0.9rem; color: var(--ink); }
+.wordmark canvas { display: block; height: 28px; width: auto; image-rendering: pixelated; }
+
+.masthead__meta {
+  display: flex;
+  gap: 1.25rem;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.masthead__meta strong { color: var(--ink-soft); font-weight: 600; }
+
+/* ─────────────────────────────────────────────────────────────
+   Shell
+   ───────────────────────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  max-width: 90rem;
+  margin: 0 auto;
+}
+
+/* Contents rail */
+.rail {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 1rem 3rem 2rem;
+  border-right: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: var(--step--1);
+}
+
+.rail__title {
+  margin: 0 0 0.9rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.rail ol { list-style: none; margin: 0; padding: 0; }
+.rail > ol > li { margin-bottom: 0.15rem; }
+
+.rail a {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.24rem 0.5rem 0.24rem 0.4rem;
+  border-radius: 3px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.rail a:hover { background: var(--paper-sunk); color: var(--ink); }
+
+.rail a.is-current {
+  color: var(--accent);
+  border-left-color: var(--accent-bright);
+  background: var(--accent-wash);
+}
+
+.rail__num { color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail a.is-current .rail__num { color: var(--accent); }
+
+.rail ol ol { margin: 0.1rem 0 0.4rem 1.5rem; }
+.rail ol ol a { font-size: 0.75rem; padding-block: 0.15rem; }
+
+/* Article */
+.doc {
+  min-width: 0;
+  padding: 2.5rem 2rem 6rem;
+}
+
+.doc > * { max-width: var(--measure); }
+
+.doc > figure,
+.doc > .table-wrap,
+.doc > pre,
+.doc > .demo { max-width: min(100%, 62rem); }
+
+/* ─────────────────────────────────────────────────────────────
+   Typography
+   Headings and structural labels are set in the monospace face:
+   a fixed cell per character, which is the same idea the whole
+   product is about.
+   ───────────────────────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+h1 { font-size: var(--step-4); line-height: 1.1; margin: 0 0 0.75rem; }
+
+h2 {
+  font-size: var(--step-3);
+  line-height: 1.2;
+  margin: 4rem 0 1rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.doc > h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 3rem; }
+
+h3 { font-size: var(--step-1); margin: 2.5rem 0 0.6rem; }
+h4 { font-size: var(--step-0); margin: 1.75rem 0 0.4rem; color: var(--ink-soft); }
+
+.sec-num {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+h3 .sec-num { display: inline; margin-right: 0.55rem; letter-spacing: 0.06em; color: var(--muted); }
+
+p { margin: 0 0 1rem; }
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 2rem;
+}
+
+ul, ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+li { margin-bottom: 0.4rem; }
+li > ul, li > ol { margin-top: 0.4rem; }
+
+strong { font-weight: 650; color: var(--ink); }
+
+kbd {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule-strong);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 0.1em 0.4em;
+  white-space: nowrap;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.875em;
+  background: var(--paper-sunk);
+  padding: 0.12em 0.34em;
+  border-radius: 3px;
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  line-height: 1.6;
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 1rem 1.15rem;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+}
+
+pre code { background: none; padding: 0; font-size: inherit; }
+
+.tok-c { color: var(--muted); font-style: italic; }
+.tok-k { color: var(--accent); }
+.tok-s { color: var(--tip); }
+
+/* Path / menu trail */
+.trail {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Tables
+   ───────────────────────────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 0 1.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--step--1);
+}
+
+th, td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+thead th {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--paper-sunk);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--paper-sunk); }
+
+td code { white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ─────────────────────────────────────────────────────────────
+   Callouts — semantic colour, never the accent
+   ───────────────────────────────────────────────────────────── */
+.note {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--muted);
+  background: var(--paper-raised);
+  border-radius: 4px;
+  padding: 0.9rem 1.1rem;
+  margin: 0 0 1.5rem;
+}
+
+.note > :last-child { margin-bottom: 0; }
+
+.note__label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.note--tip { border-left-color: var(--tip); background: var(--tip-wash); }
+.note--tip .note__label { color: var(--tip); }
+
+.note--warn { border-left-color: var(--warn); background: var(--warn-wash); }
+.note--warn .note__label { color: var(--warn); }
+
+/* ─────────────────────────────────────────────────────────────
+   Figures
+   ───────────────────────────────────────────────────────────── */
+figure {
+  margin: 0 0 1.75rem;
+  padding: 1.25rem;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+figure > svg { display: block; width: 100%; max-width: 100%; height: auto; color: var(--ink-soft); }
+
+figcaption {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* Dither illustration */
+.demo { margin: 0 0 1.75rem; }
+
+.demo__panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.demo__panel { min-width: 0; }
+
+.demo__panel canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  background: var(--paper-sunk);
+}
+
+.demo__caption {
+  display: block;
+  margin-top: 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.demo__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.demo__controls input[type="range"] { accent-color: var(--accent-bright); flex: 1 1 10rem; max-width: 18rem; }
+.demo__controls output { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; }
+
+/* Definition rows for API members */
+.api {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin: 0 0 1.25rem;
+  overflow: hidden;
+}
+
+.api__sig {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  background: var(--paper-sunk);
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.api__body { padding: 0.85rem 0.9rem; }
+.api__body > :last-child { margin-bottom: 0; }
+
+/* ─────────────────────────────────────────────────────────────
+   Responsive
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 60rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+
+  .rail {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.6rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-raised);
+  }
+
+  .rail__title { display: none; }
+  .rail > ol { display: flex; gap: 0.3rem; }
+  .rail > ol > li { margin: 0; }
+  .rail ol ol { display: none; }
+  .rail a { white-space: nowrap; border-left: 0; border-bottom: 2px solid transparent; border-radius: 3px 3px 0 0; }
+  .rail a.is-current { border-left: 0; border-bottom-color: var(--accent-bright); }
+
+  .doc { padding: 1.75rem 1.25rem 4rem; }
+  .masthead__inner { padding: 1.15rem 1.25rem; }
+  :root { --step-4: 2rem; --step-3: 1.5rem; }
+}
+
+@media print {
+  .rail { display: none; }
+  .shell { grid-template-columns: 1fr; }
+  h2 { break-after: avoid; }
+  figure, .table-wrap, pre { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead__inner">
+    <div class="wordmark">
+      <canvas id="wordmark" aria-hidden="true"></canvas>
+      <span class="visually-hidden">To Pixel Art Tools</span>
+    </div>
+    <div class="masthead__meta">
+      <span>Version <strong>1.0</strong></span>
+      <span>Unity <strong>6000.x+</strong></span>
+      <span>Clouded Studio</span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+
+<nav class="rail" aria-label="Contents">
+  <p class="rail__title">Contents</p>
+  <ol>
+    <li><a href="#overview"><span class="rail__num">1</span><span>Overview</span></a></li>
+    <li><a href="#getting-started"><span class="rail__num">2</span><span>Getting started</span></a></li>
+    <li><a href="#window"><span class="rail__num">3</span><span>The window</span></a></li>
+    <li><a href="#pipeline"><span class="rail__num">4</span><span>How the pipeline works</span></a></li>
+    <li>
+      <a href="#stages"><span class="rail__num">5</span><span>Stage reference</span></a>
+      <ol>
+        <li><a href="#stage-smooth"><span class="rail__num">5.1</span><span>Smooth</span></a></li>
+        <li><a href="#stage-background"><span class="rail__num">5.2</span><span>Background Removal</span></a></li>
+        <li><a href="#stage-color-removal"><span class="rail__num">5.3</span><span>Color Removal</span></a></li>
+        <li><a href="#stage-pixelart"><span class="rail__num">5.4</span><span>Pixel Art</span></a></li>
+        <li><a href="#stage-despeckle"><span class="rail__num">5.5</span><span>Despeckle</span></a></li>
+        <li><a href="#stage-outline"><span class="rail__num">5.6</span><span>Outline</span></a></li>
+        <li><a href="#stage-diffuse"><span class="rail__num">5.7</span><span>Diffuse</span></a></li>
+        <li><a href="#stage-island-removal"><span class="rail__num">5.8</span><span>Island Removal</span></a></li>
+      </ol>
+    </li>
+    <li><a href="#presets"><span class="rail__num">6</span><span>Presets</span></a></li>
+    <li><a href="#animations"><span class="rail__num">7</span><span>Animations</span></a></li>
+    <li><a href="#batch"><span class="rail__num">8</span><span>Batch conversion</span></a></li>
+    <li><a href="#profiles"><span class="rail__num">9</span><span>Profiles</span></a></li>
+    <li><a href="#palettes"><span class="rail__num">10</span><span>Palettes</span></a></li>
+    <li><a href="#output"><span class="rail__num">11</span><span>Output settings</span></a></li>
+    <li><a href="#scripting"><span class="rail__num">12</span><span>Scripting API</span></a></li>
+    <li><a href="#performance"><span class="rail__num">13</span><span>Performance</span></a></li>
+    <li><a href="#troubleshooting"><span class="rail__num">14</span><span>Troubleshooting</span></a></li>
+    <li><a href="#support"><span class="rail__num">15</span><span>Support</span></a></li>
+  </ol>
+</nav>
+
+<main class="doc">
+
+<h1>To Pixel Art Tools</h1>
+<p class="lede">
+  Turn any image into pixel art, entirely inside Unity. No external tools, no Python, no third party
+  packages, no internet connection — the whole conversion is native C#.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="overview"><span class="sec-num">Section 1</span>Overview</h2>
+
+<p>
+  To Pixel Art Tools converts photographs, renders, illustrations and existing sprites into pixel art
+  through a configurable pipeline of eight stages. It is built around a live preview, because the right
+  colour count or merge tolerance for a given image is something you find by watching the image, not
+  by reasoning about numbers.
+</p>
+
+<h3>Requirements</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Item</th><th>Requirement</th></tr></thead>
+  <tbody>
+    <tr><td>Unity</td><td>6000.x (Unity 6) or newer</td></tr>
+    <tr><td>Render pipeline</td><td>Any — Built-in, URP and HDRP. The tool does not render anything.</td></tr>
+    <tr><td>Platforms</td><td>All. The runtime API works in every build target, including WebGL.</td></tr>
+    <tr><td>Dependencies</td><td>None. No packages, no native plugins, no network access.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>What is in the package</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Folder</th><th>Contents</th></tr></thead>
+  <tbody>
+    <tr><td><code>Runtime/</code></td><td>The conversion pipeline, settings, profile and palette assets. Assembly <code>CloudedStudio.ToPixelArtTools</code>.</td></tr>
+    <tr><td><code>Editor/</code></td><td>The window, inspectors, batch tools and exporters. Assembly <code>CloudedStudio.ToPixelArtTools.Editor</code>, editor only.</td></tr>
+    <tr><td><code>Documentation/</code></td><td>This document and a plain text manual.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  The package can be moved or renamed anywhere inside <code>Assets</code>. It locates its own files at
+  runtime, so reorganising your project will not break it.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">Build size</span>
+  <p>
+    If you never call the API from your own code, the runtime assembly costs a few kilobytes and
+    nothing else — Unity strips assemblies that nothing references. The editor assembly is never
+    included in a build.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="getting-started"><span class="sec-num">Section 2</span>Getting started</h2>
+
+<h3>Your first conversion</h3>
+
+<ol>
+  <li>Open <span class="trail">Window ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Convert to Pixel Art</span>.</li>
+  <li>Drag an image into the window, assign a project texture in <strong>Source</strong>, or choose <strong>Open External Image…</strong> for a PNG/JPG/JPEG that should remain outside the project.</li>
+  <li>Pick a starting point from the <strong>Presets</strong> menu in the toolbar — see <a href="#presets">section 6</a> for which one suits your source.</li>
+  <li>Adjust the settings on the left. The preview reconverts as you go.</li>
+  <li>Press <strong>Convert and Save</strong>.</li>
+</ol>
+
+<p>
+  The result is written into <code>Assets</code> with a <code>_PixelArt</code> suffix, already imported
+  with point filtering, no compression and no mipmaps — the settings pixel art needs in order to stay
+  crisp in game. Project sources can save beside themselves; external originals are never imported.
+</p>
+
+<h3>Where everything lives</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Menu</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr>
+      <td class="trail">Window ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Convert to Pixel Art</td>
+      <td>Opens the main conversion window.</td>
+    </tr>
+    <tr>
+      <td class="trail">Window ▸ … ▸ Batch Convert…</td>
+      <td>Converts a whole project selection with a saved profile.</td>
+    </tr>
+    <tr>
+      <td class="trail">Window ▸ … ▸ Create Preset Profiles</td>
+      <td>Writes one profile asset per built in preset.</td>
+    </tr>
+    <tr>
+      <td class="trail">Window ▸ … ▸ Documentation</td>
+      <td>Opens the text manual.</td>
+    </tr>
+    <tr>
+      <td class="trail">Assets ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Convert to Pixel Art…</td>
+      <td>Right-click an image in the Project window to open it in the tool.</td>
+    </tr>
+    <tr>
+      <td class="trail">Assets ▸ … ▸ Batch Convert…</td>
+      <td>Right-click a selection or a folder to batch convert it.</td>
+    </tr>
+    <tr>
+      <td class="trail">Assets ▸ … ▸ Create Palette from Image</td>
+      <td>Extracts a palette asset from the selected image.</td>
+    </tr>
+    <tr>
+      <td class="trail">Assets ▸ Create ▸ Clouded Studio ▸ To Pixel Art Tools</td>
+      <td>Creates an empty Pixel Art Profile or Color Palette asset.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="window"><span class="sec-num">Section 3</span>The conversion window</h2>
+
+<p>Settings on the left, live preview on the right.</p>
+
+<h3>Preview controls</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Action</th><th>How</th></tr></thead>
+  <tbody>
+    <tr><td>Zoom</td><td>Mouse wheel over the preview, or the <kbd>−</kbd> and <kbd>+</kbd> buttons. Zooming follows the cursor, so the detail you are pointing at stays under the pointer.</td></tr>
+    <tr><td>Pan</td><td>Middle mouse drag, or <kbd>Alt</kbd> + left drag.</td></tr>
+    <tr><td>Fit to window</td><td><strong>Fit</strong></td></tr>
+    <tr><td>Actual size</td><td><strong>1:1</strong></td></tr>
+    <tr><td>Compare before and after</td><td>Set the view mode to <strong>Compare</strong>, then drag the white divider.</td></tr>
+    <tr><td>Pixel grid</td><td><strong>Grid</strong>, drawn once you pass 8× magnification.</td></tr>
+    <tr><td>Scale reference</td><td><span class="trail">Scale Reference ▸ Choose Image…</span>, then drag the overlay around.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>Compare</strong> draws both images into the same rectangle rather than side by side, so the
+  divider reveals the same region of each. That is what makes it possible to judge whether a shape
+  survived the conversion, instead of only whether the two images look similar.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">Scale reference</span>
+  <p>
+    The overlay exists for one question that comes up constantly: <em>is this the right resolution for
+    my game?</em> Drop in a character sprite you already ship and compare directly, rather than
+    guessing from a pixel count.
+  </p>
+</div>
+
+<h3>Live preview</h3>
+
+<p>
+  The preview reconverts a fraction of a second after you stop changing something. Conversion runs on a
+  background thread and is cancelled the moment another change arrives, so dragging a slider stays
+  responsive even on large images.
+</p>
+
+<p>
+  Turn <strong>Live Preview</strong> off in the toolbar when working with a long animation and use
+  <strong>Refresh</strong> to convert on demand. Above 24 frames the window tells you so.
+</p>
+
+<h3>The information bar</h3>
+
+<pre><code>128 × 128 px  ·  factor 4×  ·  palette 32  ·  41 colours in output  ·  86 ms</code></pre>
+
+<p>
+  <strong>Palette</strong> is how many colours the quantizer produced. <strong>Colours in output</strong>
+  is what the final image actually contains. They differ when a stage placed <em>after</em> Pixel Art
+  blends new colours in — Outline and Diffuse both do. If you need the palette to be exact, move those
+  stages above Pixel Art or turn them off.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="pipeline"><span class="sec-num">Section 4</span>How the pipeline works</h2>
+
+<p>
+  A conversion is a list of stages run top to bottom. You can drag them into any order in the
+  <strong>Pipeline</strong> list, and the order changes the result more than most of the individual
+  settings do.
+</p>
+
+<p>
+  <strong>Pixel Art is the pivot.</strong> Everything above it works on the full resolution source;
+  everything below it works on the finished low resolution grid, where every pixel is one of only a few
+  thousand and each one is clearly visible.
+</p>
+
+<figure>
+<svg viewBox="0 0 880 330" role="img" aria-label="The default eight-stage pipeline uses Pixel Art as a pivot: Smooth, Background Removal and Color Removal operate on the full-resolution source; Despeckle, Outline, Diffuse and Island Removal operate on the reduced pixel grid.">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <polygon points="0,1 9,5 0,9" fill="currentColor"></polygon>
+    </marker>
+  </defs>
+
+  <!-- resolution bands -->
+  <rect x="16" y="34" width="848" height="98" rx="5" fill="currentColor" opacity="0.045"></rect>
+  <rect x="16" y="202" width="848" height="98" rx="5" fill="currentColor" opacity="0.045"></rect>
+
+  <text x="28" y="26" font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.65" letter-spacing="1.4">FULL RESOLUTION SOURCE — e.g. 512 × 512</text>
+  <text x="28" y="322" font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.65" letter-spacing="1.4">REDUCED PIXEL GRID — e.g. 128 × 128</text>
+
+  <!-- upper row -->
+  <g font-family="ui-monospace, monospace" font-size="12.5" fill="currentColor">
+    <rect x="24" y="58" width="130" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="89" y="82" text-anchor="middle">Smooth</text>
+    <text x="89" y="98" text-anchor="middle" font-size="10" opacity="0.6">remove noise</text>
+
+    <rect x="184" y="58" width="170" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="269" y="82" text-anchor="middle">Background Removal</text>
+    <text x="269" y="98" text-anchor="middle" font-size="10" opacity="0.6">key colour to alpha</text>
+
+    <rect x="384" y="58" width="140" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="454" y="82" text-anchor="middle">Color Removal</text>
+    <text x="454" y="98" text-anchor="middle" font-size="10" opacity="0.6">colour list to alpha</text>
+  </g>
+
+  <!-- pivot -->
+  <rect x="554" y="52" width="200" height="62" rx="4" fill="#E09A2B" opacity="0.14"></rect>
+  <rect x="554" y="52" width="200" height="62" rx="4" fill="none" stroke="#E09A2B" stroke-width="2"></rect>
+  <text x="654" y="78" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13.5" font-weight="600" fill="currentColor">Pixel Art</text>
+  <text x="654" y="95" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="currentColor" opacity="0.7">downscale + quantize</text>
+  <text x="654" y="107" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="currentColor" opacity="0.7">+ optional dither</text>
+
+  <!-- arrows across the top row -->
+  <g stroke="currentColor" stroke-width="1.3" marker-end="url(#arw)" opacity="0.8">
+    <line x1="154" y1="83" x2="176" y2="83"></line>
+    <line x1="354" y1="83" x2="376" y2="83"></line>
+    <line x1="524" y1="83" x2="546" y2="83"></line>
+  </g>
+
+  <!-- the drop -->
+  <path d="M 654 114 L 654 166 L 109 166 L 109 196" fill="none" stroke="#E09A2B" stroke-width="2" marker-end="url(#arw)" color="#E09A2B"></path>
+  <text x="668" y="148" font-family="ui-monospace, monospace" font-size="11" fill="currentColor" opacity="0.8">resolution drops here</text>
+
+  <!-- lower row -->
+  <g font-family="ui-monospace, monospace" font-size="12.5" fill="currentColor">
+    <rect x="24" y="220" width="170" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="109" y="244" text-anchor="middle">Despeckle</text>
+    <text x="109" y="260" text-anchor="middle" font-size="10" opacity="0.6">repaint colour specks</text>
+
+    <rect x="224" y="220" width="170" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="309" y="244" text-anchor="middle">Outline</text>
+    <text x="309" y="260" text-anchor="middle" font-size="10" opacity="0.6">edge the silhouette</text>
+
+    <rect x="424" y="220" width="170" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="509" y="244" text-anchor="middle">Diffuse</text>
+    <text x="509" y="260" text-anchor="middle" font-size="10" opacity="0.6">painterly blend</text>
+
+    <rect x="624" y="220" width="190" height="50" rx="4" fill="none" stroke="currentColor" stroke-width="1.2" opacity="0.85"></rect>
+    <text x="719" y="244" text-anchor="middle">Island Removal</text>
+    <text x="719" y="260" text-anchor="middle" font-size="10" opacity="0.6">delete detached fragments</text>
+  </g>
+
+  <g stroke="currentColor" stroke-width="1.3" marker-end="url(#arw)" opacity="0.8">
+    <line x1="194" y1="245" x2="216" y2="245"></line>
+    <line x1="394" y1="245" x2="416" y2="245"></line>
+    <line x1="594" y1="245" x2="616" y2="245"></line>
+  </g>
+</svg>
+<figcaption>
+  Stages above the Pixel Art stage operate on the full resolution image; stages below it operate on the
+  reduced grid. This is the default order; dragging a stage across that line changes what it does, not
+  just when it runs. For example, the <em>Painted</em> preset deliberately moves Diffuse above Pixel Art.
+</figcaption>
+</figure>
+
+<h3>What moving a stage actually changes</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Stage</th><th>Above Pixel Art</th><th>Below Pixel Art</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Smooth</strong></td>
+      <td>Stops noise from being baked into pixels. <strong>This is where it belongs.</strong></td>
+      <td>Just blurs the finished result.</td>
+    </tr>
+    <tr>
+      <td><strong>Background Removal</strong></td>
+      <td>Edge peeling has full resolution material to work with. <strong>Almost always correct.</strong></td>
+      <td>Each peeled layer costs a whole output pixel.</td>
+    </tr>
+    <tr>
+      <td><strong>Color Removal</strong></td>
+      <td>Matches colours sampled from the source before quantization changes them. <strong>The usual placement.</strong></td>
+      <td>Useful when you specifically want to remove colours from the final palette.</td>
+    </tr>
+    <tr>
+      <td><strong>Despeckle</strong></td>
+      <td>Nothing meaningful to do — stray pixels do not exist yet.</td>
+      <td>Removes the specks quantization left. <strong>This is where it belongs.</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Outline</strong></td>
+      <td>Drawn at full resolution then reduced: softer, thinner, partly anti-aliased.</td>
+      <td>Drawn onto the grid: exactly the thickness you asked for.</td>
+    </tr>
+    <tr>
+      <td><strong>Diffuse</strong></td>
+      <td>A painting effect applied to the source.</td>
+      <td>Scatters your finished pixels. Occasionally the effect you want, usually not.</td>
+    </tr>
+    <tr>
+      <td><strong>Island Removal</strong></td>
+      <td>Measures components in source pixels, so the configured size rarely means what you intend.</td>
+      <td>Measures detached fragments on the final grid. <strong>This is where it belongs.</strong></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="stages"><span class="sec-num">Section 5</span>Stage reference</h2>
+
+<p>
+  Each stage has an <strong>Enabled</strong> checkbox, shown both in the Pipeline list and inside its
+  own section. Pixel Art is the exception: it is the conversion itself, so it always runs.
+</p>
+
+<!-- ─────────── 5.1 ─────────── -->
+<h3 id="stage-smooth"><span class="sec-num">5.1</span>Smooth</h3>
+
+<p>
+  Noise reduction that preserves edges, applied to the colour channels only. Alpha is never touched —
+  softening it would reintroduce exactly the semi transparent fringe the rest of the pipeline works to
+  remove.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Method</strong></td><td>Bilateral · Total Variation</td><td>Which algorithm to run.</td></tr>
+    <tr><td>Sigma Color</td><td class="num">0.02 – 0.5</td><td><em>Bilateral.</em> How different two colours may be and still be averaged together. Higher smooths across stronger colour changes.</td></tr>
+    <tr><td>Sigma Spatial</td><td class="num">0.5 – 10</td><td><em>Bilateral.</em> Radius of influence in pixels. Cost grows with the square of this value.</td></tr>
+    <tr><td>Weight</td><td class="num">0.02 – 0.5</td><td><em>Total Variation.</em> Higher produces broader, flatter blocks of colour.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>Bilateral</strong> is a blur whose weights are additionally scaled by how similar each
+  neighbour's colour is. A neighbour across a strong edge contributes almost nothing, so noise inside a
+  flat region is averaged away while the edge stays exactly where it was. That property is the point:
+  an edge blurred before the resolution drop becomes a visibly wrong pixel afterwards.
+</p>
+
+<p>
+  <strong>Total Variation</strong> minimises the total amount of change across the image while staying
+  close to the original. The result is piecewise constant — regions collapse into flat plateaus
+  separated by sharp steps, which is a very good match for what pixel art wants.
+</p>
+
+<div class="note note--warn">
+  <span class="note__label">Cost</span>
+  <p>
+    Smooth runs at full source resolution by default and is by far the most expensive stage. If the
+    preview feels sluggish, this is almost always why. Lower <strong>Sigma
+    Spatial</strong> first.
+  </p>
+</div>
+
+<!-- ─────────── 5.2 ─────────── -->
+<h3 id="stage-background"><span class="sec-num">5.2</span>Background Removal</h3>
+
+<p>Turns a flat background colour into transparency, in two passes.</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Key Color</td><td>any</td><td>The background colour to remove. White by default.</td></tr>
+    <tr><td>Tolerance</td><td class="num">0 – 255</td><td>First pass, applied <em>everywhere</em>. Keep it low.</td></tr>
+    <tr><td>Edge Tolerance</td><td class="num">0 – 255</td><td>Second pass, applied only to pixels touching background already removed.</td></tr>
+    <tr><td>Edge Passes</td><td class="num">0 – 15</td><td>How many layers of blended edge to peel away. 0 disables the second pass.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  The split is the whole design. A single threshold cannot tell a background apart from a light area
+  <em>inside</em> your subject, so set low it leaves a halo and set high it punches holes. The second
+  pass can be far more permissive precisely because an enclosed area never touches the outside and is
+  therefore unreachable by it.
+</p>
+
+<p>Distance is measured as the largest single channel difference from the key colour, which is stricter than an average — a pixel matching on two channels but clearly off on the third is correctly kept.</p>
+
+<div class="note note--tip">
+  <span class="note__label">Tuning order</span>
+  <p>
+    Start at tolerance 25, edge tolerance 80, 3 passes. If a halo remains, raise <strong>Edge
+    Passes</strong> before you touch either tolerance. If part of your subject vanished, lower
+    <strong>Tolerance</strong> — that is the pass that reaches everywhere.
+  </p>
+</div>
+
+<!-- ─────────── 5.3 ─────────── -->
+<h3 id="stage-color-removal"><span class="sec-num">5.3</span>Color Removal</h3>
+
+<p>
+  Turns pixels matching <em>any</em> selected colour into full transparency. Use <strong>Add
+  Color</strong> as many times as needed; each swatch participates in the same pass, and the
+  corresponding <strong>Remove</strong> button deletes only that entry.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Colors</td><td>zero or more</td><td>The list of RGB colours to remove. The stage makes no change while the list is empty.</td></tr>
+    <tr><td>Tolerance</td><td class="num">0 – 255</td><td>Maximum allowed difference on every RGB channel. 0 removes exact matches only.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Matching uses the largest difference on any RGB channel. With tolerance 10, a pixel is removed only
+  when its red, green and blue channels are each no more than 10 away from at least one selected colour.
+  The selected swatch's alpha is ignored, and a match clears all four channels to zero.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">Placement</span>
+  <p>
+    Keep Color Removal above Pixel Art when the swatches came from the original image, before
+    quantization changes those colours. Move it below Pixel Art only when you intend to remove colours
+    produced by the final palette.
+  </p>
+</div>
+
+<!-- ─────────── 5.4 ─────────── -->
+<h3 id="stage-pixelart"><span class="sec-num">5.4</span>Pixel Art</h3>
+
+<p>The conversion itself: resolution reduction, then colour quantization, then optional clean up.</p>
+
+<h4>Downscale</h4>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Method</th><th>Use when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Nearest</strong></td><td>Art with clean shapes. Samples the centre of each block, so edges stay perfectly hard.</td></tr>
+    <tr><td><strong>Box</strong></td><td>Heavy anti aliasing or fine detail, where Nearest would sample noise at random.</td></tr>
+    <tr><td><strong>LAB Average</strong></td><td>Same as Box, but mixes colour perceptually. Blue and yellow average to green rather than to mud.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Both averaging methods weight the average by alpha, so fully transparent pixels cannot drag the
+  visible colour of a block toward whatever arbitrary value they happen to store.
+</p>
+
+<p>
+  <strong>Factor</strong> is how many source pixels become one output pixel; a factor of 4 turns 512
+  into 128. <strong>Automatic Factor</strong> measures how wide the image's existing runs of identical
+  colour already are — that recovers the real block size of art that was drawn small and scaled up. If
+  the source has no block structure at all, it falls back to whatever factor lands the longest side near
+  256 pixels. It is a starting point, not an answer.
+</p>
+
+<h4>Quantization</h4>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Method</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>K-Means</strong></td><td>Clusters the image's colours perceptually. Best quality and the default. Deterministic from a seed.</td></tr>
+    <tr><td><strong>Median Cut</strong></td><td>The classic fast algorithm. Splits along RGB axes, so it can spend entries on wide but visually unimportant gradients.</td></tr>
+    <tr><td><strong>Fixed Palette</strong></td><td>Maps onto a palette asset you supply. Guarantees consistency across every asset using it.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Colors</td><td class="num">2 – 256</td><td>Requested palette size. Hidden when a fixed palette is assigned.</td></tr>
+    <tr><td>Palette Seed</td><td class="num">0 – 9999</td><td><em>K-Means.</em> A different seed gives a different but equally valid palette.</td></tr>
+    <tr><td>Ignore Transparent Pixels</td><td>on / off</td><td>Leaves fully transparent pixels out of palette building.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note note--tip">
+  <span class="note__label">Palette Seed</span>
+  <p>
+    If two or three colours land somewhere you dislike, nudging the seed is usually faster than
+    fighting the colour count. Clustering has many good answers; the seed picks which one you get, and
+    the same seed always gives the same result.
+  </p>
+</div>
+
+<p>
+  <strong>Ignore Transparent Pixels</strong> is on by default and should usually stay on. The colour
+  stored underneath a transparent pixel is arbitrary and never visible, so including it just consumes
+  palette entries you will never see.
+</p>
+
+<h4>Dithering</h4>
+
+<p>
+  Dithering spreads the quantization error so a small palette can suggest colours it does not actually
+  contain. Without it, a gradient mapped onto twelve colours becomes twelve hard bands. With it, the
+  boundary between two palette colours becomes a mix of both and reads as smooth from a normal viewing
+  distance.
+</p>
+
+<div class="demo" id="ditherDemo">
+  <div class="demo__panels">
+    <div class="demo__panel">
+      <canvas id="dcNone" width="200" height="132"></canvas>
+      <span class="demo__caption">No dither — banding</span>
+    </div>
+    <div class="demo__panel">
+      <canvas id="dcFs" width="200" height="132"></canvas>
+      <span class="demo__caption">Error diffusion</span>
+    </div>
+    <div class="demo__panel">
+      <canvas id="dcOrd" width="200" height="132"></canvas>
+      <span class="demo__caption">Ordered 4×4</span>
+    </div>
+  </div>
+  <div class="demo__controls">
+    <label for="dcColors">Palette size</label>
+    <input type="range" id="dcColors" min="2" max="16" value="6" step="1">
+    <output id="dcColorsOut">6</output>
+    <span>colours</span>
+  </div>
+  <p style="font-size:var(--step--1); color:var(--muted); margin-top:0.75rem;">
+    Interactive illustration of the principle: one gradient reduced to the same few colours three ways.
+    Drag the slider down to see how far dithering can stretch a very small palette.
+  </p>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Method</th><th>Character</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Floyd–Steinberg</strong></td><td>Error diffusion. Organic, irregular texture that follows the image. The closest match to the original, and the best choice for a still image.</td></tr>
+    <tr><td><strong>Ordered 2×2</strong></td><td>Very coarse, strongly visible pattern.</td></tr>
+    <tr><td><strong>Ordered 4×4</strong></td><td>The classic retro cross hatch. A good default when the dithering should read as a deliberate style.</td></tr>
+    <tr><td><strong>Ordered 8×8</strong></td><td>The finest, smoothest ordered pattern.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>Dither Strength</strong> (0 – 1) scales how much error is spread. Below 1 keeps the pattern
+  subtle while still breaking up the worst banding, which usually suits artwork better than full
+  strength does.
+</p>
+
+<p>
+  Both methods measure error perceptually. The ordered methods nudge each pixel <em>along the direction
+  of its own quantization error</em> rather than along a fixed axis — so they dither correctly across
+  boundaries between colours that differ in hue, not only across boundaries in brightness.
+  Floyd–Steinberg scans in a serpentine pattern, alternating direction every row, which cancels the
+  diagonal streaking that a single scan direction leaves in flat areas.
+</p>
+
+<div class="note note--warn">
+  <span class="note__label">Dithering and clean up cancel out</span>
+  <p>
+    Dithering works by placing isolated, alternating pixels — which is exactly what <strong>Merge
+    Runs</strong> and the <strong>Despeckle</strong> stage exist to remove. Use one or the other. The
+    window warns you when both are on.
+  </p>
+</div>
+
+<div class="note note--tip">
+  <span class="note__label">For animations, prefer an ordered method</span>
+  <p>
+    Ordered patterns depend only on pixel position, so they are identical from frame to frame. Error
+    diffusion depends on the whole image, so a small change between frames reshuffles the noise and the
+    pattern visibly crawls during playback.
+  </p>
+</div>
+
+<h4>Merge Runs</h4>
+
+<p>
+  Sweeps rows and then columns, collapsing sequences of near identical colours into one flat colour.
+  This is the automated version of the clean up an artist does by hand — a region that already reads as
+  one flat colour still contains a dozen barely different values, and actually making it one colour is
+  what makes the result look deliberate. Sweeping rows and columns also reinforces horizontal and
+  vertical structure, which is the bias hand made pixel art has.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Merge Tolerance</td><td class="num">0 – 50</td><td>Maximum perceptual distance for two pixels to join the same run.</td></tr>
+    <tr><td>Merge Passes</td><td class="num">1 – 8</td><td>How many horizontal plus vertical sweeps to run.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Tolerance is measured perceptually, so the numbers correspond to something real: about
+  <strong>2</strong> is the threshold of human vision, <strong>8–12</strong> merges what already looks
+  the same, and <strong>15–25</strong> deliberately flattens shading into bands.
+</p>
+
+<h4>Color Transfer</h4>
+
+<p>
+  Applies the tone, saturation and contrast of any reference image to the result. The two images need
+  nothing in common — a sunset photograph will push a sprite toward warm tones and lift its contrast the
+  way the sunset's own does. Statistics are gathered from visible pixels only, so a large transparent
+  margin cannot dictate the result.
+</p>
+
+<p>
+  Because the transfer moves every pixel independently and produces a continuous gradient, the image is
+  re-quantized afterwards to bring it back to a pixel art palette.
+</p>
+
+<h4>Alpha Threshold and Sharpen</h4>
+
+<p>
+  <strong>Alpha Threshold</strong> (0 – 255) forces alpha to be either fully transparent or fully
+  opaque. Anti aliasing leaves a rim of partially transparent pixels that is invisible at full
+  resolution but becomes a row of washed out pixels on a grid — and a visible seam wherever the sprite
+  is drawn over a different background. Set it to 0 to keep the original alpha.
+</p>
+
+<p>
+  <strong>Sharpen</strong> applies a light sharpening kernel to the colour channels, useful after Box or
+  LAB Average downscaling. Alpha is deliberately excluded so it cannot undo the alpha threshold that
+  just ran.
+</p>
+
+<!-- ─────────── 5.5 ─────────── -->
+<h3 id="stage-despeckle"><span class="sec-num">5.5</span>Despeckle</h3>
+
+<p>
+  Removes connected regions smaller than <strong>Minimum Region Size</strong> (1 – 30), repainting them
+  with the colour that occurs most often immediately around them. Regions of transparency count too.
+  <strong>Passes</strong> (1 – 8) repeats the sweep; it stops early once nothing changes.
+</p>
+
+<p>
+  This catches what Merge Runs structurally cannot. A single misplaced pixel forms no run in either
+  direction, so a row and column sweep always leaves it behind — and it is exactly the kind of speck
+  that makes an image read as noisy rather than drawn.
+</p>
+
+<!-- ─────────── 5.6 ─────────── -->
+<h3 id="stage-outline"><span class="sec-num">5.6</span>Outline</h3>
+
+<p>
+  Darkens the boundary between distinct colour regions and around the silhouette, which is what gives
+  hand drawn pixel art its readable shape.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Thickness</td><td class="num">1 – 4</td><td>Outline width in pixels, grown inward.</td></tr>
+    <tr><td>Strength</td><td class="num">0 – 1</td><td>How far to blend toward the outline colour. 1 replaces the pixel outright.</td></tr>
+    <tr><td>Color</td><td>any</td><td>The outline colour.</td></tr>
+    <tr><td>Minimum Contrast</td><td class="num">0 – 255</td><td>How different two neighbouring colours must be to count as an edge.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <strong>Minimum Contrast</strong> is the setting that decides whether this looks good. Too low and the
+  outline traces every small step the quantizer left behind, turning the sprite into a wireframe. Around
+  <strong>90</strong> is a good starting point for sprites; at <strong>255</strong> only the silhouette
+  is drawn.
+</p>
+
+<p>
+  The outline is drawn on the inside of the silhouette, so it never grows the sprite's footprint. The
+  image border is never treated as an edge — a full bleed background will not come back with a frame
+  drawn around it.
+</p>
+
+<!-- ─────────── 5.7 ─────────── -->
+<h3 id="stage-diffuse"><span class="sec-num">5.7</span>Diffuse</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Mode</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Anisotropic</strong></td><td>Blends the four quadrants around each pixel, weighted by how uniform each one is. Edges survive because a quadrant straddling an edge always has high variance and contributes little; flat areas are cleanly averaged. An oil painting effect.</td></tr>
+    <tr><td><strong>Random</strong></td><td>Replaces each pixel with a random neighbour.</td></tr>
+    <tr><td><strong>Darken</strong></td><td>Same, but only when the neighbour is darker.</td></tr>
+    <tr><td><strong>Lighten</strong></td><td>Same, but only when the neighbour is lighter.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Radius</td><td class="num">1 – 6</td><td>Quadrant size in Anisotropic; how far a pixel may travel in the scattering modes.</td></tr>
+    <tr><td>Sharpness</td><td class="num">0 – 10</td><td><em>Anisotropic.</em> How strongly the most uniform quadrant dominates.</td></tr>
+    <tr><td>Iterations</td><td class="num">1 – 10</td><td><em>Scattering modes.</em> How many times to repeat.</td></tr>
+    <tr><td>Fixed Seed / Seed</td><td class="num">0 – 9999</td><td><em>Scattering modes.</em> Turn Fixed Seed off for a different scatter every run.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Anisotropic blends the quadrants rather than picking a single winner as a classic Kuwahara filter
+  does. Near an edge the four variances end up similar, so no quadrant dominates and the result is a
+  slight mix right at the boundary — that soft transition is what reads as a brush stroke instead of
+  hard posterisation. Low <strong>Sharpness</strong> around 0.2–0.4 blends generously; 8 and above
+  converges on the hard classic look.
+</p>
+
+<!-- ─────────── 5.8 ─────────── -->
+<h3 id="stage-island-removal"><span class="sec-num">5.8</span>Island Removal</h3>
+
+<p>
+  Deletes small foreground components that are disconnected from the rest of the image by
+  transparency. Unlike Despeckle, it does not look for a small patch of one colour or repaint it from
+  its neighbours: it considers all connected non-transparent pixels part of the same island and makes
+  qualifying islands fully transparent.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Setting</th><th>Range</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td>Maximum Island Size</td><td class="num">1 – 4096</td><td>Removes components containing this many pixels or fewer. A value of 3 removes islands of 1, 2 or 3 pixels and preserves islands of 4 or more.</td></tr>
+    <tr><td>Transparency Threshold</td><td class="num">1 – 255</td><td>Alpha values below this threshold count as transparent while connected components are found.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Connectivity includes all eight neighbours, so pixels touching diagonally belong to the same island.
+  Transparency Threshold only controls this classification; it does not otherwise change partially
+  transparent pixels that belong to a preserved component. Use Pixel Art's <strong>Alpha
+  Threshold</strong> as well when the output itself should have hard alpha edges.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">Placement</span>
+  <p>
+    Keep Island Removal below Pixel Art so sizes are measured on the final pixel grid and it can remove
+    fragments introduced by downscaling or quantization.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="presets"><span class="sec-num">Section 6</span>Presets</h2>
+
+<p>
+  The settings interact, and the useful combinations are not obvious from the individual controls. A
+  photograph needs smoothing before the resolution drop or the quantizer spends its palette on noise;
+  clean vector style art needs none and is only softened by it. The presets encode those pairings.
+</p>
+
+<p>
+  Pick one from the <strong>Presets</strong> menu in the toolbar. Nothing is written to disk — use
+  <span class="trail">Window ▸ … ▸ Create Preset Profiles</span> if you want them as assets.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Preset</th><th>Built for</th><th>Key choices</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Clean Sprite</strong></td>
+      <td>Character and object art that already has clear shapes.</td>
+      <td>Nearest · K-Means 32 · merge runs · despeckle · alpha threshold</td>
+    </tr>
+    <tr>
+      <td><strong>Bold Outline Sprite</strong></td>
+      <td>Sprites that must read over busy backgrounds.</td>
+      <td>Clean Sprite plus a 1 px outline at contrast 90</td>
+    </tr>
+    <tr>
+      <td><strong>Photo to Pixel Art</strong></td>
+      <td>Photographs and highly detailed renders.</td>
+      <td>Bilateral smoothing · Box downscale · K-Means 32 · despeckle</td>
+    </tr>
+    <tr>
+      <td><strong>Environment and Backgrounds</strong></td>
+      <td>Large scenes rather than single objects.</td>
+      <td>LAB Average · K-Means 64 · gentle merge tolerance</td>
+    </tr>
+    <tr>
+      <td><strong>Retro 16 Colors</strong></td>
+      <td>A deliberate hardware era look.</td>
+      <td>K-Means 16 · heavy merging and despeckling</td>
+    </tr>
+    <tr>
+      <td><strong>Dithered Retro</strong></td>
+      <td>Gradients on a very limited palette.</td>
+      <td>K-Means 12 · Ordered 4×4 dither at 0.8 · merging and despeckling <em>off</em></td>
+    </tr>
+    <tr>
+      <td><strong>Painted</strong></td>
+      <td>A painted rather than sampled feel.</td>
+      <td>Diffuse moved <em>above</em> Pixel Art · Box downscale · K-Means 48</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="animations"><span class="sec-num">Section 7</span>Animations</h2>
+
+<p>
+  If your file name ends in a number — <code>walk_001.png</code>, <code>walk01.png</code>,
+  <code>walk-1.png</code>, <code>frame1.png</code> — the other frames beside it are detected
+  automatically and an <strong>Animation Sequence</strong> checkbox appears.
+</p>
+
+<p>
+  With it on, every frame is converted together against <strong>one shared palette</strong>. This is not
+  a convenience. Quantizing frames independently lets each shade drift by a step or two between frames,
+  which is invisible in a still comparison and impossible to miss once the animation plays.
+</p>
+
+<p>
+  Use the timeline under the preview to scrub or play back at a chosen frame rate.
+  <strong>Convert and Save</strong> writes every frame, each keeping its original file name.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">Frames that are not numbered consistently</span>
+  <p>
+    Detection needs the same prefix, the same extension and a trailing number. If your frames do not
+    match, select them all in the Project window and use <a href="#batch">Batch Convert</a> with
+    <strong>Share One Palette</strong> instead — it reaches the same result without renaming anything.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="batch"><span class="sec-num">Section 8</span>Batch conversion</h2>
+
+<p>
+  Select any number of images or folders in the Project window, then
+  <span class="trail">Assets ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Batch Convert…</span>. Pick a
+  profile, decide whether to share one palette, and convert.
+</p>
+
+<p>
+  You can also add external PNG, JPG and JPEG files or folders, or drag several into the batch window.
+  Project and external sources can be mixed. External results always go to the configured folder inside
+  <code>Assets</code>, even when <strong>Save Next to Source</strong> is enabled, so originals remain outside
+  the project.
+</p>
+
+<p>
+  The progress bar is cancellable, and anything that fails is reported at the end rather than stopping
+  the run at the first error.
+</p>
+
+<p>
+  <strong>Share One Palette</strong> builds a single palette from every selected image and applies it to
+  all of them. Worth considering for tilesets, icon sets and anything else that is seen together:
+  converted image by image, they end up with colours that almost match, which reads as sloppy in a way
+  that is hard to name but easy to see.
+</p>
+
+<p>
+  The <strong>More</strong> menu in the conversion window batches the current selection using the
+  settings you are looking at, which is convenient once you have dialled them in.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="profiles"><span class="sec-num">Section 9</span>Profiles</h2>
+
+<p>
+  A profile is an asset holding a complete set of conversion settings plus the palette and reference
+  image they use. Finding the settings that suit a project's art style takes real experimentation, and
+  once found they should be applied identically to everything from then on.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Task</th><th>How</th></tr></thead>
+  <tbody>
+    <tr><td>Create from current settings</td><td><strong>Save As…</strong> in the window toolbar.</td></tr>
+    <tr><td>Create empty</td><td><span class="trail">Assets ▸ Create ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Pixel Art Profile</span></td></tr>
+    <tr><td>Update an existing one</td><td><strong>Save</strong>.</td></tr>
+    <tr><td>Discard changes</td><td><strong>Revert</strong>.</td></tr>
+    <tr><td>Edit with a live preview</td><td><strong>Open in To Pixel Art Window</strong>, at the top of the profile inspector.</td></tr>
+    <tr><td>Share across projects</td><td>Import and export JSON, from the window's <strong>More</strong> menu or the profile inspector.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Profiles are plain assets, so they diff and merge in version control like anything else. Editing one
+  in its inspector supports undo normally.
+</p>
+
+<div class="note">
+  <span class="note__label">Forward compatible</span>
+  <p>
+    A profile saved by an older version that is missing a stage added later still loads — the stage list
+    is rebuilt and the new stage takes its default position, rather than the file being rejected.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="palettes"><span class="sec-num">Section 10</span>Palettes</h2>
+
+<p>
+  Locking a set of assets to one palette is the difference between a collection of sprites and a
+  coherent art style. Create one with
+  <span class="trail">Assets ▸ Create ▸ Clouded Studio ▸ To Pixel Art Tools ▸ Color Palette</span>.
+</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Tool</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Import…</strong></td><td>Reads <code>.hex</code>, <code>.txt</code> and GIMP <code>.gpl</code> files. Blank lines and comments are ignored, so a file mixing notes with colours still loads.</td></tr>
+    <tr><td><strong>Export…</strong></td><td>Writes the palette out as a plain hexadecimal list.</td></tr>
+    <tr><td><strong>Extract From</strong></td><td>Derives a palette from an image by clustering its colours — the usual way an artist gets a palette is by pointing at art they like.</td></tr>
+    <tr><td><strong>Sort by Hue</strong></td><td>Groups by colour family, near greys first. Makes a large palette far easier to read.</td></tr>
+    <tr><td><strong>Sort by Luminance</strong></td><td>Orders from darkest to lightest.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  To use a palette, set <strong>Quantization</strong> to <em>Fixed Palette</em> and assign it. Right
+  clicking an image in the Project window also offers <strong>Create Palette from Image</strong>
+  directly.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="output"><span class="sec-num">Section 11</span>Output and import settings</h2>
+
+<p>
+  By default the result is written next to the source with a <code>_PixelArt</code> suffix.
+  <strong>Overwrite Existing</strong> is off: re-running a conversion while dialling in settings is
+  normal, and silently replacing a result that prefabs and scenes may already reference is not a
+  sensible default. Writing over the source image is blocked outright.
+</p>
+
+<p><strong>Apply Import Settings</strong> configures the written texture the way pixel art needs:</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Import setting</th><th>Value</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>Filter Mode</td><td>Point</td><td>Anything else blurs the pixels you just created.</td></tr>
+    <tr><td>Compression</td><td>Uncompressed</td><td>Block compression mottles flat colour areas.</td></tr>
+    <tr><td>Mip Maps</td><td>Off</td><td>2D art is drawn at a fixed scale.</td></tr>
+    <tr><td>Non-Power-of-2</td><td>None</td><td>Rescaling on import would destroy the pixel grid.</td></tr>
+    <tr><td>Max Size</td><td>Large enough for the result</td><td>Stops the importer shrinking the image.</td></tr>
+    <tr><td>Alpha Is Transparency</td><td>On</td><td>Correct filtering around transparent edges.</td></tr>
+    <tr><td>Wrap Mode</td><td>Clamp</td><td>No bleeding from the opposite edge.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Turn on <strong>Import as Sprite</strong> to set the texture type and pixels per unit at the same
+  time.
+</p>
+
+<div class="note note--tip">
+  <span class="note__label">The tool reads the original file, not the imported texture</span>
+  <p>
+    Import settings such as maximum size and compression therefore do not affect the conversion, and
+    your source does not need Read/Write enabled. The artwork on disk is the source of truth. Textures
+    with no file behind them — generated at runtime, for instance — are read from the texture itself.
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="scripting"><span class="sec-num">Section 12</span>Scripting API</h2>
+
+<p>
+  Everything the window does is available from code, in the editor and in builds. Namespace:
+  <code>CloudedStudio.ToPixelArtTools</code>.
+</p>
+
+<h3>Converting textures</h3>
+
+<div class="api">
+  <div class="api__sig">Texture2D PixelArtConverter.Convert(Texture2D source, PixelArtProfile profile)</div>
+  <div class="api__body"><p>Converts a texture with a saved profile. Returns a new point filtered texture that <strong>you own</strong> — destroy it when you are done.</p></div>
+</div>
+
+<div class="api">
+  <div class="api__sig">Texture2D PixelArtConverter.Convert(Texture2D source, PixelArtPipelineSettings settings,
+                                    PixelArtPipelineResources resources = null,
+                                    CancellationToken cancellationToken = default)</div>
+  <div class="api__body"><p>Converts with settings built in code.</p></div>
+</div>
+
+<div class="api">
+  <div class="api__sig">Texture2D[] PixelArtConverter.ConvertSequence(IReadOnlyList&lt;Texture2D&gt; frames, …)</div>
+  <div class="api__body"><p>Converts several textures against one shared palette, as animation frames must be.</p></div>
+</div>
+
+<div class="api">
+  <div class="api__sig">Task&lt;Texture2D&gt; PixelArtConverter.ConvertAsync(Texture2D source, PixelArtPipelineSettings settings,
+                                              PixelArtPipelineResources resources = null,
+                                              IProgress&lt;PixelArtProgress&gt; progress = null,
+                                              CancellationToken cancellationToken = default)</div>
+  <div class="api__body"><p>Runs the processing off the main thread. The texture is read before the task starts and the result texture created after it finishes, both on the calling thread, so no Unity object is ever touched from a worker.</p></div>
+</div>
+
+<pre><code><span class="tok-c">// With a profile asset.</span>
+Texture2D result = PixelArtConverter.Convert(source, profile);
+
+<span class="tok-c">// With settings built in code.</span>
+<span class="tok-k">var</span> settings = <span class="tok-k">new</span> PixelArtPipelineSettings();
+settings.PixelArt.ColorCount = 24;
+settings.PixelArt.AutomaticFactor = <span class="tok-k">false</span>;
+settings.PixelArt.Factor = 4;
+settings.PixelArt.Dither = DitherMethod.Ordered4x4;
+settings.ColorRemoval.Enabled = <span class="tok-k">true</span>;
+settings.ColorRemoval.Colors.Add(<span class="tok-k">new</span> Rgba32(255, 0, 255));
+settings.ColorRemoval.Colors.Add(<span class="tok-k">new</span> Rgba32(0, 255, 0));
+settings.ColorRemoval.Tolerance = 8;
+settings.Despeckle.Enabled = <span class="tok-k">true</span>;
+settings.IslandRemoval.Enabled = <span class="tok-k">true</span>;
+settings.IslandRemoval.MaximumIslandSize = 3;
+settings.IslandRemoval.TransparencyThreshold = 1;
+
+Texture2D custom = PixelArtConverter.Convert(source, settings);
+
+<span class="tok-c">// Starting from a preset, then adjusting.</span>
+<span class="tok-k">var</span> photo = PixelArtPresets.CreateByName(<span class="tok-s">"Photo to Pixel Art"</span>);
+photo.PixelArt.ColorCount = 48;
+
+<span class="tok-c">// Animation frames sharing one palette.</span>
+Texture2D[] frames = PixelArtConverter.ConvertSequence(sourceFrames, settings);</code></pre>
+
+<h3>Working with buffers directly</h3>
+
+<p>
+  <code>PixelBuffer</code> is a plain RGBA32 byte buffer with no engine dependency — which is what makes
+  the pipeline safe to run on a background thread, and what lets it be unit tested outside Unity.
+</p>
+
+<pre><code>PixelBuffer buffer = TextureConverter.ToPixelBuffer(sourceTexture);
+PixelArtConversionResult result = PixelArtPipeline.ProcessDetailed(buffer, settings);
+
+Debug.Log($<span class="tok-s">"factor {result.DownscaleFactor}, palette {result.Palette.Count}"</span>);
+
+Texture2D texture = TextureConverter.ToTexture2D(result.Frame);
+<span class="tok-k">byte</span>[] png = TextureConverter.EncodeToPng(result.Frame);</code></pre>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Member</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>PixelArtConversionResult.Frames</code></td><td>Converted images, in the order supplied.</td></tr>
+    <tr><td><code>PixelArtConversionResult.Frame</code></td><td>The first frame. Convenient for single image conversions.</td></tr>
+    <tr><td><code>PixelArtConversionResult.DownscaleFactor</code></td><td>The factor used, whether configured or detected.</td></tr>
+    <tr><td><code>PixelArtConversionResult.Palette</code></td><td>The palette every frame was mapped onto.</td></tr>
+    <tr><td><code>PixelBuffer.CountDistinctColors()</code></td><td>How many distinct colours the result actually contains.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Palettes and resources</h3>
+
+<pre><code><span class="tok-k">var</span> palette = <span class="tok-k">new</span> ColorPalette(<span class="tok-k">new</span>[]
+{
+    <span class="tok-k">new</span> Rgba32(0, 0, 0),
+    <span class="tok-k">new</span> Rgba32(255, 255, 255),
+});
+
+<span class="tok-k">var</span> resources = <span class="tok-k">new</span> PixelArtPipelineResources { FixedPalette = palette };
+settings.PixelArt.Quantization = QuantizationMethod.FixedPalette;
+
+Texture2D result = PixelArtConverter.Convert(source, settings, resources);</code></pre>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Resource</th><th>Used when</th></tr></thead>
+  <tbody>
+    <tr><td><code>FixedPalette</code></td><td>Quantization is set to <em>Fixed Palette</em>. Ignored otherwise.</td></tr>
+    <tr><td><code>PrecomputedPalette</code></td><td>Always. Overrides palette generation entirely — this is how batch conversion shares one palette across many images.</td></tr>
+    <tr><td><code>ColorTransferReference</code></td><td>Colour transfer is enabled.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Settings object</h3>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Member</th><th>Type</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><code>Order</code></td><td><code>List&lt;PipelineStep&gt;</code></td><td>Execution order. Every stage appears exactly once.</td></tr>
+    <tr><td><code>Smooth</code></td><td><code>SmoothSettings</code></td><td><code>Enabled, Method, SigmaColor, SigmaSpatial, TvWeight</code></td></tr>
+    <tr><td><code>BackgroundRemoval</code></td><td><code>BackgroundRemovalSettings</code></td><td><code>Enabled, KeyColor, Tolerance, EdgeTolerance, EdgePasses</code></td></tr>
+    <tr><td><code>ColorRemoval</code></td><td><code>ColorRemovalSettings</code></td><td><code>Enabled, Colors, Tolerance</code></td></tr>
+    <tr><td><code>PixelArt</code></td><td><code>PixelArtSettings</code></td><td><code>Downscale, AutomaticFactor, Factor, Quantization, ColorCount, IgnoreTransparentPixels, PaletteSeed, Dither, DitherStrength, MergeRuns, MergeTolerance, MergePasses, ColorTransferEnabled, ColorTransferStrength, AlphaThreshold, Sharpen</code></td></tr>
+    <tr><td><code>Despeckle</code></td><td><code>DespeckleSettings</code></td><td><code>Enabled, MinimumRegionSize, Passes</code></td></tr>
+    <tr><td><code>Outline</code></td><td><code>OutlineSettings</code></td><td><code>Enabled, Thickness, Strength, Color, MinimumContrast</code></td></tr>
+    <tr><td><code>Diffuse</code></td><td><code>DiffuseSettings</code></td><td><code>Enabled, Mode, Radius, Sharpness, Iterations, UseFixedSeed, Seed</code></td></tr>
+    <tr><td><code>IslandRemoval</code></td><td><code>IslandRemovalSettings</code></td><td><code>Enabled, MaximumIslandSize, TransparencyThreshold</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  <code>Clone()</code> returns a deep copy safe to hand to another thread.
+  <code>Normalize()</code> repairs a settings object loaded from disk: it fills in null sections and
+  rebuilds an incomplete stage order. Call it after deserialising settings yourself.
+</p>
+
+<h3>Determinism</h3>
+
+<div class="note note--tip">
+  <span class="note__label">Guaranteed</span>
+  <p>
+    Given the same input and settings, the pipeline produces <strong>byte identical output</strong> on
+    every platform and regardless of how many threads it used. Nothing depends on
+    <code>UnityEngine.Random</code>, <code>System.Random</code> or wall clock time. The single exception
+    is Diffuse with <strong>Fixed Seed</strong> turned off, which is opt in.
+  </p>
+</div>
+
+<p>
+  This matters more than it might seem: it means a conversion can run in CI, results can be committed,
+  and a regression in your art pipeline shows up as a real diff rather than as noise.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="performance"><span class="sec-num">Section 13</span>Performance</h2>
+
+<p>Indicative figures for a 512 × 512 source on a modern desktop CPU, reducing by 4×:</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Configuration</th><th class="num">Time</th></tr></thead>
+  <tbody>
+    <tr><td>Pixel Art only, K-Means 32 colours</td><td class="num">~40 ms</td></tr>
+    <tr><td>Plus bilateral smoothing (Sigma Spatial 2)</td><td class="num">~120 ms</td></tr>
+    <tr><td>Plus total variation smoothing</td><td class="num">~600 ms</td></tr>
+  </tbody>
+</table>
+</div>
+
+<ul>
+  <li><strong>Smooth is the expensive stage</strong>. It runs at full source resolution by default, and bilateral cost grows with the square of Sigma Spatial.</li>
+  <li>Everything after the resolution drop operates on a much smaller image and is effectively free.</li>
+  <li>Row parallel work is spread across CPU cores automatically, and falls back to a single thread where threads are unavailable (WebGL). Results are identical either way.</li>
+  <li>Palette building clusters the <em>distinct colours</em> of an image weighted by how often each occurs, rather than the individual pixels. That is mathematically identical to clustering every pixel and dramatically faster.</li>
+  <li>Floyd–Steinberg dithering is inherently sequential and cannot be parallelised. The ordered methods can, and are.</li>
+</ul>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="troubleshooting"><span class="sec-num">Section 14</span>Troubleshooting</h2>
+
+<h4>The result has more colours than my colour count</h4>
+<p>
+  A stage after Pixel Art is blending new colours in — Outline and Diffuse both do. Move them above
+  Pixel Art in the pipeline list, or turn them off. The information bar shows both numbers so you can
+  see it happening.
+</p>
+
+<h4>The output looks noisy and speckled</h4>
+<p>
+  The source has detail in every pixel and Nearest is sampling it at random. Switch
+  <strong>Downscale</strong> to Box or LAB Average, enable <strong>Smooth</strong>, and turn on
+  <strong>Despeckle</strong>.
+</p>
+
+<h4>I turned on dithering but the pattern is gone</h4>
+<p>
+  <strong>Merge Runs</strong> or <strong>Despeckle</strong> removed it. Both exist to delete isolated
+  pixels, and the dither pattern is made of isolated pixels. Turn them off.
+</p>
+
+<h4>The dither pattern crawls when my animation plays</h4>
+<p>
+  Switch from Floyd–Steinberg to one of the ordered methods. Error diffusion depends on the whole image,
+  so any small change between frames reshuffles the noise; ordered patterns depend only on position and
+  stay locked in place.
+</p>
+
+<h4>I see banding in a gradient</h4>
+<p>
+  The palette has run out of colours. Raise <strong>Colors</strong>, or turn on <strong>Dither</strong>
+  to trade the bands for texture — often the better trade at low colour counts.
+</p>
+
+<h4>Background removal ate part of my subject</h4>
+<p>
+  Lower <strong>Tolerance</strong> — that is the pass which reaches everywhere. Raise <strong>Edge
+  Passes</strong> instead to clean the remaining halo, since the edge pass cannot reach enclosed areas.
+</p>
+
+<h4>Background removal left a halo</h4>
+<p>
+  Raise <strong>Edge Passes</strong> first, then <strong>Edge Tolerance</strong>. Leave
+  <strong>Tolerance</strong> low.
+</p>
+
+<h4>I need to remove several unrelated colours</h4>
+<p>
+  Use <strong>Color Removal</strong> instead of Background Removal, add every colour to its list, and
+  raise <strong>Tolerance</strong> gradually. Keep it above Pixel Art when the swatches came from the
+  source image. At tolerance 0 only exact RGB matches are removed.
+</p>
+
+<h4>Small disconnected pixels remain after removing the background</h4>
+<p>
+  Enable <strong>Island Removal</strong>, keep it below Pixel Art, and set <strong>Maximum Island
+  Size</strong> to the largest fragment that should disappear. Raise <strong>Transparency
+  Threshold</strong> if a semi-transparent fringe is still joining the fragment to the subject.
+</p>
+
+<h4>The outline is everywhere and the sprite looks like a wireframe</h4>
+<p>
+  Raise <strong>Minimum Contrast</strong>. It is tracing quantization steps rather than real
+  transitions.
+</p>
+
+<h4>Colours shimmer between animation frames</h4>
+<p>
+  Turn on <strong>Animation Sequence</strong> so all frames share one palette. If your frames are not
+  numbered consistently, select them all and use Batch Convert with <strong>Share One Palette</strong>.
+</p>
+
+<h4>The preview does not match my imported asset</h4>
+<p>
+  Expected. The tool reads the original file rather than the imported texture, so import settings such
+  as maximum size and compression do not affect the conversion. See
+  <a href="#output">section 11</a>.
+</p>
+
+<h4>The window is slow with a long animation</h4>
+<p>
+  Turn off <strong>Live Preview</strong> in the toolbar and use <strong>Refresh</strong> to convert on
+  demand. Above 24 frames the window says so.
+</p>
+
+<h4>“Fixed palette quantization was selected but no palette was supplied.”</h4>
+<p>
+  Assign a palette asset in the Pixel Art section, or switch the quantization method to K-Means or
+  Median Cut.
+</p>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<h2 id="support"><span class="sec-num">Section 15</span>Support</h2>
+
+<p>
+  Questions, bug reports and feature requests are welcome. To get a useful answer quickly, please
+  include:
+</p>
+
+<ul>
+  <li>Your Unity version and target platform.</li>
+  <li>The source image, or one that reproduces the problem.</li>
+  <li>The settings you used — export them as JSON from the window's <strong>More</strong> menu.</li>
+  <li>What you expected and what you got.</li>
+</ul>
+
+<p style="margin-top:2.5rem; padding-top:1.5rem; border-top:1px solid var(--rule); font-family:var(--mono); font-size:var(--step--1); color:var(--muted);">
+  To Pixel Art Tools · Version 1.0 · Clouded Studio
+</p>
+
+</main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ─────────────────────────────────────────────────────────
+     Pixel wordmark
+     A 5x7 bitmap face drawn by the page itself. The product is
+     about turning smooth images into fixed cells of colour, so
+     the title is set in fixed cells of colour.
+     ───────────────────────────────────────────────────────── */
+  var GLYPHS = {
+    "A": ["01110","10001","10001","11111","10001","10001","10001"],
+    "E": ["11111","10000","10000","11110","10000","10000","11111"],
+    "I": ["11111","00100","00100","00100","00100","00100","11111"],
+    "L": ["10000","10000","10000","10000","10000","10000","11111"],
+    "O": ["01110","10001","10001","10001","10001","10001","01110"],
+    "P": ["11110","10001","10001","11110","10000","10000","10000"],
+    "R": ["11110","10001","10001","11110","10100","10010","10001"],
+    "S": ["01111","10000","10000","01110","00001","00001","11110"],
+    "T": ["11111","00100","00100","00100","00100","00100","00100"],
+    "X": ["10001","10001","01010","00100","01010","10001","10001"],
+    " ": ["00000","00000","00000","00000","00000","00000","00000"]
+  };
+
+  var TEXT = "TO PIXEL ART TOOLS";
+  var CELL = 3;      // logical pixels per bitmap cell
+  var GAP  = 1;      // blank columns between glyphs
+
+  function drawWordmark() {
+    var canvas = document.getElementById("wordmark");
+    if (!canvas) return;
+
+    var cols = 0;
+    for (var i = 0; i < TEXT.length; i++) {
+      cols += 5 + (i < TEXT.length - 1 ? GAP : 0);
+    }
+
+    var dpr = window.devicePixelRatio || 1;
+    var w = cols * CELL;
+    var h = 7 * CELL;
+
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.height = "28px";
+    canvas.style.width = (28 * (w / h)) + "px";
+
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.imageSmoothingEnabled = false;
+    ctx.fillStyle = getComputedStyle(canvas).color || "#000";
+
+    var x = 0;
+    for (var c = 0; c < TEXT.length; c++) {
+      var glyph = GLYPHS[TEXT.charAt(c)] || GLYPHS[" "];
+      for (var row = 0; row < 7; row++) {
+        for (var col = 0; col < 5; col++) {
+          if (glyph[row].charAt(col) === "1") {
+            ctx.fillRect((x + col) * CELL, row * CELL, CELL, CELL);
+          }
+        }
+      }
+      x += 5 + GAP;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Dither illustration
+     A gradient reduced to N colours three ways. This is an
+     illustration of the principle, not a reimplementation of
+     the plugin.
+     ───────────────────────────────────────────────────────── */
+  var BAYER4 = [
+    [ 0,  8,  2, 10],
+    [12,  4, 14,  6],
+    [ 3, 11,  1,  9],
+    [15,  7, 13,  5]
+  ];
+
+  function buildGradient(w, h) {
+    var pixels = new Float32Array(w * h * 3);
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var u = x / (w - 1);
+        var v = y / (h - 1);
+        var i = (y * w + x) * 3;
+        pixels[i]     = 40 + u * 200;
+        pixels[i + 1] = 60 + v * 150;
+        pixels[i + 2] = 210 - u * 150 + v * 40;
+      }
+    }
+    return pixels;
+  }
+
+  /* Evenly spaced ramp between two ends of the gradient's own range. */
+  function buildPalette(n) {
+    var palette = [];
+    for (var i = 0; i < n; i++) {
+      var t = n === 1 ? 0 : i / (n - 1);
+      palette.push([
+        40 + t * 200,
+        60 + t * 150,
+        210 - t * 110
+      ]);
+    }
+    return palette;
+  }
+
+  function nearest(palette, r, g, b) {
+    var best = 0, bestD = Infinity;
+    for (var i = 0; i < palette.length; i++) {
+      var dr = palette[i][0] - r, dg = palette[i][1] - g, db = palette[i][2] - b;
+      var d = dr * dr + dg * dg + db * db;
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    return best;
+  }
+
+  function render(canvas, pixels, palette, mode) {
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    var w = canvas.width, h = canvas.height;
+    var image = ctx.createImageData(w, h);
+    var work = new Float32Array(pixels);
+
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var i = (y * w + x) * 3;
+        var r = work[i], g = work[i + 1], b = work[i + 2];
+
+        if (mode === "ordered") {
+          var t = (BAYER4[y % 4][x % 4] + 0.5) / 16 - 0.5;
+          var step = 255 / Math.max(1, palette.length - 1);
+          r += t * step; g += t * step; b += t * step;
+        }
+
+        var idx = nearest(palette, r, g, b);
+        var chosen = palette[idx];
+
+        if (mode === "diffusion") {
+          var er = r - chosen[0], eg = g - chosen[1], eb = b - chosen[2];
+          spread(work, w, h, x + 1, y,     er, eg, eb, 7 / 16);
+          spread(work, w, h, x - 1, y + 1, er, eg, eb, 3 / 16);
+          spread(work, w, h, x,     y + 1, er, eg, eb, 5 / 16);
+          spread(work, w, h, x + 1, y + 1, er, eg, eb, 1 / 16);
+        }
+
+        var o = (y * w + x) * 4;
+        image.data[o]     = chosen[0];
+        image.data[o + 1] = chosen[1];
+        image.data[o + 2] = chosen[2];
+        image.data[o + 3] = 255;
+      }
+    }
+
+    ctx.putImageData(image, 0, 0);
+  }
+
+  function spread(buf, w, h, x, y, r, g, b, k) {
+    if (x < 0 || x >= w || y < 0 || y >= h) return;
+    var i = (y * w + x) * 3;
+    buf[i]     += r * k;
+    buf[i + 1] += g * k;
+    buf[i + 2] += b * k;
+  }
+
+  function updateDemo() {
+    var slider = document.getElementById("dcColors");
+    var output = document.getElementById("dcColorsOut");
+    var none = document.getElementById("dcNone");
+    var fs = document.getElementById("dcFs");
+    var ord = document.getElementById("dcOrd");
+    if (!slider || !none || !fs || !ord) return;
+
+    var n = parseInt(slider.value, 10);
+    if (output) output.textContent = String(n);
+
+    var palette = buildPalette(n);
+    var pixels = buildGradient(none.width, none.height);
+
+    render(none, pixels, palette, "none");
+    render(fs, pixels, palette, "diffusion");
+    render(ord, pixels, palette, "ordered");
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Contents rail: highlight the section in view
+     ───────────────────────────────────────────────────────── */
+  function setupScrollspy() {
+    var links = Array.prototype.slice.call(document.querySelectorAll(".rail a[href^='#']"));
+    if (!links.length || !("IntersectionObserver" in window)) return;
+
+    var byId = {};
+    links.forEach(function (link) {
+      byId[link.getAttribute("href").slice(1)] = link;
+    });
+
+    var targets = Object.keys(byId)
+      .map(function (id) { return document.getElementById(id); })
+      .filter(Boolean);
+
+    var visible = {};
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        visible[entry.target.id] = entry.isIntersecting;
+      });
+
+      var current = null;
+      for (var i = 0; i < targets.length; i++) {
+        if (visible[targets[i].id]) { current = targets[i].id; break; }
+      }
+
+      if (!current) return;
+
+      links.forEach(function (link) {
+        link.classList.toggle("is-current", link.getAttribute("href") === "#" + current);
+      });
+    }, { rootMargin: "-72px 0px -70% 0px", threshold: 0 });
+
+    targets.forEach(function (target) { observer.observe(target); });
+  }
+
+  /* ───────────────────────────────────────────────────────── */
+  function init() {
+    drawWordmark();
+    updateDemo();
+    setupScrollspy();
+
+    var slider = document.getElementById("dcColors");
+    if (slider) slider.addEventListener("input", updateDemo);
+
+    // The wordmark is painted, not styled, so it has to be repainted
+    // when the theme changes underneath it.
+    if (window.matchMedia) {
+      var scheme = window.matchMedia("(prefers-color-scheme: dark)");
+      if (scheme.addEventListener) scheme.addEventListener("change", drawWordmark);
+    }
+
+    if (window.MutationObserver) {
+      new MutationObserver(drawWordmark).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"]
+      });
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+</body>
+</html>

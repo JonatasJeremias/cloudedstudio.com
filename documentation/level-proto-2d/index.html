@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level Proto 2D Metroidvania — Documentation</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f6f7f9;
+    --surface-2: #eef0f3;
+    --border: #e3e6eb;
+    --text: #1a1d23;
+    --text-soft: #5b6272;
+    --text-faint: #8890a0;
+    --accent: #4f5fe0;
+    --accent-soft: #eef0fd;
+    --code-bg: #f2f3f7;
+    --code-text: #3a3f52;
+    --warn-bg: #fff8ec;
+    --warn-border: #f0c674;
+    --warn-text: #8a5a00;
+    --tip-bg: #eefaf3;
+    --tip-border: #6fcf97;
+    --tip-text: #196c3f;
+    --shadow: 0 1px 2px rgba(20, 23, 32, 0.04), 0 4px 16px rgba(20, 23, 32, 0.04);
+    --radius: 10px;
+    --sidebar-w: 272px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1015;
+      --surface: #14161d;
+      --surface-2: #1a1d26;
+      --border: #262a35;
+      --text: #e7e9f0;
+      --text-soft: #a2a8ba;
+      --text-faint: #6c7386;
+      --accent: #8b96ff;
+      --accent-soft: #1c2040;
+      --code-bg: #171a23;
+      --code-text: #cfd3e6;
+      --warn-bg: #2a2210;
+      --warn-border: #7a5a12;
+      --warn-text: #e8c876;
+      --tip-bg: #10231a;
+      --tip-border: #2f6b4c;
+      --tip-text: #86e0ae;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code, pre, kbd {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.87em;
+  }
+
+  code {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 0.15em 0.4em;
+    border-radius: 5px;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    overflow-x: auto;
+    position: relative;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--code-text);
+    white-space: pre;
+  }
+
+  kbd {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    padding: 0.1em 0.5em;
+    font-size: 0.82em;
+  }
+
+  /* ---------- layout ---------- */
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+    max-width: 1320px;
+    margin: 0 auto;
+  }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    padding: 28px 20px 40px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #7c88ff 60%, #a5aeff);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .brand-mark::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 3px;
+  }
+
+  .sidebar-brand strong { font-size: 15px; letter-spacing: -0.01em; }
+  .sidebar-version {
+    display: inline-block;
+    margin: 8px 0 22px;
+    font-size: 11.5px;
+    color: var(--text-soft);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .nav-group { margin-bottom: 20px; }
+  .nav-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin: 0 0 8px 2px;
+  }
+  .nav-group ul { list-style: none; margin: 0; padding: 0; }
+  .nav-group a {
+    display: block;
+    color: var(--text-soft);
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .nav-group a:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+  .nav-group a.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  main {
+    flex: 1;
+    min-width: 0;
+    padding: 48px 56px 120px;
+  }
+
+  .hero {
+    margin-bottom: 56px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+  }
+  .badge.accent { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+
+  h1 { font-size: 34px; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .hero p.lead { font-size: 17.5px; color: var(--text-soft); max-width: 640px; margin: 0; }
+
+  section { margin-bottom: 60px; scroll-margin-top: 24px; }
+  section h2 {
+    font-size: 24px;
+    margin: 0 0 6px;
+    padding-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  section > .section-kicker {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--accent);
+    margin-bottom: 6px;
+    display: block;
+  }
+  h3 { font-size: 18px; margin: 30px 0 10px; letter-spacing: -0.005em; }
+  h4 { font-size: 14.5px; margin: 22px 0 8px; color: var(--text); }
+  p { color: var(--text); margin: 0 0 14px; }
+  section p.desc { color: var(--text-soft); margin-bottom: 22px; max-width: 720px; }
+
+  ul.plain, ol.plain { padding-left: 22px; margin: 0 0 16px; }
+  ul.plain li, ol.plain li { margin-bottom: 6px; }
+
+  .grid-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 22px 0 8px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .card h4 { margin-top: 0; font-size: 14.5px; }
+  .card p { font-size: 13.5px; color: var(--text-soft); margin: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 26px;
+    font-size: 13.8px;
+  }
+  caption { text-align: left; font-size: 12px; color: var(--text-faint); margin-bottom: 6px; }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--text-soft);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--surface);
+  }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+
+  .callout {
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.tip { background: var(--tip-bg); border-left-color: var(--tip-border); color: var(--tip-text); }
+  .callout.warn { background: var(--warn-bg); border-left-color: var(--warn-border); color: var(--warn-text); }
+  .callout-title { font-weight: 700; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; display: block; }
+
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 20px 0; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 2px 0 18px 40px;
+    border-left: 2px solid var(--border);
+    margin-left: 14px;
+  }
+  .steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: -15px;
+    top: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps strong { display: block; margin-bottom: 3px; }
+  .steps span { color: var(--text-soft); font-size: 14px; }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    padding: 3px 9px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-soft);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  pre:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { color: var(--text); }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    margin-top: 60px;
+    font-size: 13px;
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 20;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 21;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+    main { padding: 84px 22px 100px; }
+    h1 { font-size: 27px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" id="sidebarToggle">☰ Menu</button>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <strong>Level Proto 2D</strong>
+    </div>
+    <span class="sidebar-version">v0.1.0 · Unity 6000.5+ · URP</span>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Getting Started</div>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#demo-scene">Demo Scene</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Core Concepts</div>
+      <ul>
+        <li><a href="#proto-shape">Proto Shape 2D</a></li>
+        <li><a href="#editing">Scene View Editing</a></li>
+        <li><a href="#extrude">Extrude Edge Mode</a></li>
+        <li><a href="#snapping">Snapping</a></li>
+        <li><a href="#grid-ruler">Grid Ruler (Edit-Time)</a></li>
+        <li><a href="#grid-shader">Runtime Visual Materials</a></li>
+        <li><a href="#proto-label">Proto Label 2D</a></li>
+        <li><a href="#proto-player">Proto Player</a></li>
+        <li><a href="#proto-shape-group">Proto Shape Group</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Exporting</div>
+      <ul>
+        <li><a href="#export-png">PNG Export</a></li>
+        <li><a href="#export-json">JSON Export</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul>
+        <li><a href="#settings">Project Settings</a></li>
+        <li><a href="#material-properties">Material Properties</a></li>
+        <li><a href="#menu-reference">Menu Reference</a></li>
+        <li><a href="#architecture">Package Architecture</a></li>
+        <li><a href="#limitations">Known Limitations</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+
+    <div class="hero">
+      <div class="hero-badges">
+        <span class="badge accent">Asset</span>
+        <span class="badge">CloudedStudio/LevelProto2dMetroidvania</span>
+        <span class="badge">URP</span>
+        <span class="badge">Editor + Runtime</span>
+      </div>
+      <h1>Level Proto 2D Metroidvania</h1>
+      <p class="lead">A Scene View–integrated toolkit for rapidly blocking out 2D metroidvania levels with editable polygon shapes, grid-aware movement feedback, area labels, and data-driven PNG/JSON export — no hand-placed cube sprites required.</p>
+    </div>
+
+    <section id="overview">
+      <span class="section-kicker">Introduction</span>
+      <h2>Overview</h2>
+      <p class="desc">Level Proto replaces the usual "resize a bunch of white cubes" blockout workflow with a single component, <code>ProtoShape2D</code>, that you draw and edit directly in the Scene View — arbitrary polygons, not just boxes — plus a runtime grid material so flat areas still give you a sense of scale and movement while playtesting.</p>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Draw &amp; edit freely</h4>
+          <p>Click to draw new shapes, drag vertices and edges, insert or delete points, extrude new sections from an edge — all with full Undo.</p>
+        </div>
+        <div class="card">
+          <h4>Stay aligned</h4>
+          <p>Grid snapping and axis-angle snapping keep edges level unless you intend a slope, backed by a numbered Scene View ruler.</p>
+        </div>
+        <div class="card">
+          <h4>Feel the scale</h4>
+          <p>A hand-written URP shader draws a major/minor grid with ruler-style tick marks in world space, visible in Play Mode and builds.</p>
+        </div>
+        <div class="card">
+          <h4>Export the data</h4>
+          <p>Render the whole prototype to PNG (grid included, no camera capture) or dump it to JSON for another tool's pipeline.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="installation">
+      <span class="section-kicker">Getting Started</span>
+      <h2>Installation</h2>
+      <p class="desc">This asset is distributed as a plain Assets-folder package, following the Unity Asset Store's required layout — everything lives under a single folder named after the asset, not under <code>Packages/</code>.</p>
+      <ol class="plain">
+        <li>Import the <code>.unitypackage</code> (or copy this folder) into your project — it installs under <code>Assets/CloudedStudio/LevelProto2dMetroidvania</code>.</li>
+        <li>Confirm your project uses <strong>Universal Render Pipeline</strong> (both the standard Universal Renderer and the 2D Renderer are supported by the runtime grid shader).</li>
+        <li>Confirm the <strong>Input System</strong> package is installed (required by Proto Player's <code>PlayerInput</code> component).</li>
+      </ol>
+      <div class="callout tip">
+        <span class="callout-title">Dependencies</span>
+        <p>Only <code>com.unity.render-pipelines.universal</code> and <code>com.unity.modules.physics2d</code> are required — no Shader Graph, no third-party packages.</p>
+      </div>
+    </section>
+
+    <section id="demo-scene">
+      <span class="section-kicker">Getting Started</span>
+      <h2>Demo Scene</h2>
+      <p class="desc">Open <code>Demo/Level Proto 2D - Material Showcase.unity</code> for a self-contained, playable tour of the asset. It compares Proto Grid, Cavern Stone, and Mossy Ruins side by side using real Proto Shapes rather than screenshots.</p>
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Representative geometry</h4>
+          <p>Inspect floors, floating platforms, slopes, masonry steps, decorative backgrounds, Proto Shape Groups, and Proto Labels.</p>
+        </div>
+        <div class="card">
+          <h4>Playable traversal</h4>
+          <p>Enter Play Mode, move with <kbd>A</kbd>/<kbd>D</kbd> or the arrow keys, and jump with <kbd>Space</kbd> using the configured Proto Player.</p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span class="callout-title">Build Settings</span>
+        <p>The demo scene is intentionally not added to Build Settings automatically. Add it only when you want to create a standalone demo build.</p>
+      </div>
+    </section>
+
+    <section id="quick-start">
+      <span class="section-kicker">Getting Started</span>
+      <h2>Quick Start</h2>
+      <ol class="steps">
+        <li>
+          <strong>Create a shape</strong>
+          <span>Use <code>GameObject &gt; 2D Object &gt; Proto Shape</code> for a default quad, or select the <strong>Draw Proto Shape</strong> tool in the Scene View toolbar and click out a custom outline (click the first point again, or press <kbd>Enter</kbd>, to close it).</span>
+        </li>
+        <li>
+          <strong>Shape it</strong>
+          <span>With the shape selected, drag any vertex or edge directly in the Scene View. Click an edge (without dragging) to insert a new point there; hover a vertex and press <kbd>Delete</kbd> to remove it.</span>
+        </li>
+        <li>
+          <strong>Grow it</strong>
+          <span>Switch the Inspector's Scene View Edit Mode to <strong>Extrude Edge</strong>, then drag an edge outward to push out a new section. Hold <kbd>Shift</kbd> to drag freely instead of snapping to the edge normal.</span>
+        </li>
+        <li>
+          <strong>Mark areas</strong>
+          <span>Add <code>GameObject &gt; 2D Object &gt; Proto Label</code> for callouts like "Boss Arena" — it's a normal Transform, so the built-in Move tool repositions it.</span>
+        </li>
+        <li>
+          <strong>Export</strong>
+          <span>Use <code>Tools &gt; Level Proto &gt; Export PNG</code> or <code>Export JSON</code> to hand the whole prototype off — to an artist, a design doc, or another tool.</span>
+        </li>
+      </ol>
+    </section>
+
+    <section id="proto-shape">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Proto Shape 2D</h2>
+      <p class="desc"><code>ProtoShape2D</code> is a local-space polygon: a list of <code>Vector2</code> vertices that drives a generated <code>Mesh</code> (filled with <code>Fill Color</code>) and, optionally, a matching <code>PolygonCollider2D</code>. It auto-adds <code>MeshFilter</code>/<code>MeshRenderer</code> and manages its own mesh lifecycle — you never need to touch those directly.</p>
+
+      <table>
+        <caption>Inspector fields</caption>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>Fill Color</code></td><td>Color</td><td>Per-shape base color, applied via a <code>MaterialPropertyBlock</code> so shapes can share one material instance.</td></tr>
+          <tr><td><code>Outline</code></td><td>bool</td><td>Explicitly enables the boundary outline for any bundled Visual Style.</td></tr>
+          <tr><td><code>Outline / Color</code></td><td>Color</td><td>Outline color and opacity. Defaults to solid black.</td></tr>
+          <tr><td><code>Outline / Thickness</code></td><td>float</td><td>How far the outline extends inward, in local units.</td></tr>
+          <tr><td><code>Inner Shadow</code></td><td>bool</td><td>Enables an inward shadow along every boundary edge for any bundled Visual Style.</td></tr>
+          <tr><td><code>Inner Shadow / Color</code></td><td>Color</td><td>Shadow color and opacity.</td></tr>
+          <tr><td><code>Inner Shadow / Blend Mode</code></td><td>enum</td><td>Multiply (default), Normal, Additive, or Screen.</td></tr>
+          <tr><td><code>Inner Shadow / Choke</code></td><td>0â€“1</td><td>Controls how much of the shadow remains solid before fading.</td></tr>
+          <tr><td><code>Inner Shadow / Size</code></td><td>float</td><td>How far the shadow extends inward, in local units.</td></tr>
+          <tr><td><code>Generate Collider</code></td><td>bool</td><td>Toggles a <code>PolygonCollider2D</code> matching the current vertices. Turned off for purely visual/marker shapes.</td></tr>
+          <tr><td><code>Sorting Order</code></td><td>int</td><td>Passed straight through to the <code>MeshRenderer</code>.</td></tr>
+          <tr><td><code>Tags</code></td><td>string</td><td>Free-form text, not used by the package itself - carried straight through to JSON export for downstream tooling/integrations.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <span class="callout-title">Remove Redundant Vertices</span>
+        <p>Removes any vertex that sits exactly on the straight line between its two neighbors - e.g. a stray point left in the middle of an otherwise straight edge from a mid-edge insert or an extrude - since it doesn't actually change the outline. Real corners are always kept, and the shape never drops below 3 vertices.</p>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-title">Self-intersecting shapes</span>
+        <p>If a shape's edges cross themselves, the outline turns red in the Scene View and the Inspector shows a warning with a <strong>Fix Automatically</strong> button. It tries a gentle fix first — un-crossing the outline by repeatedly reversing the vertex run between a crossing edge pair (the same move used in 2-opt route optimization), keeping every vertex's exact position. If that can't resolve it, it falls back to a fix that's <em>guaranteed</em> to work: dropping near-duplicate points and reordering the rest by angle around their centroid — this can reshape the outline more noticeably, but never fails and never moves a surviving vertex. Either way it's a single Undo step, so <kbd>Ctrl</kbd>+<kbd>Z</kbd> reverts cleanly if the result isn't what you wanted. The mesh and collider simply keep showing their last valid state until the outline is simple again — triangulation never produces a broken mesh mid-edit.</p>
+      </div>
+    </section>
+
+    <section id="editing">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Scene View Editing</h2>
+      <p class="desc">Selecting a <code>ProtoShape2D</code> turns on interactive editing directly in the Scene View — the same interaction model Unity's own <code>PolygonCollider2D</code> and <code>SpriteShapeController</code> editors use.</p>
+
+      <table>
+        <thead><tr><th>Action</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Drag a vertex</td><td>Moves that single vertex.</td></tr>
+          <tr><td>Click a vertex</td><td>Keeps it selected and opens a draggable Vertex Inspector in the Scene View for numeric local-position editing, previous/next navigation, and removal.</td></tr>
+          <tr><td>Change Tangent mode</td><td><strong>Linear</strong> is the default and has no handles. <strong>Continuous</strong> creates a smooth Bezier corner with aligned handles; <strong>Broken</strong> makes incoming and outgoing handles independent.</td></tr>
+          <tr><td>Drag an edge</td><td>Moves both its vertices together, preserving the edge.</td></tr>
+          <tr><td>Click an edge (no drag)</td><td>Inserts a new vertex at the clicked point.</td></tr>
+          <tr><td>Double-click a vertex, select it + <kbd>Delete</kbd>, or use the Vertex Inspector</td><td>Removes that vertex (shapes never drop below 3 points).</td></tr>
+        </tbody>
+      </table>
+
+      <p>Curves are tessellated into the same evaluated outline used by the generated mesh, collider, procedural material boundary, and PNG export. JSON format version 4 preserves the original control points, tangent modes, tangent offsets, outline settings, and inner-shadow settings.</p>
+
+      <p>Every operation is a full Undo step. Interactive Scene View dragging works on a <strong>single selected shape</strong> at a time — with multiple shapes selected, shared fields (color, collider toggle, etc.) still multi-edit normally in the Inspector, just not vertex dragging.</p>
+
+      <div class="callout tip">
+        <span class="callout-title">Swapping modes on the fly</span>
+        <p>Hold <kbd>Alt</kbd> while clicking a vertex or edge to temporarily use the <em>other</em> Scene View Edit Mode for that one click — extrude without leaving Edit Vertices, or edit a vertex without leaving Extrude Edge — mirroring how <kbd>Ctrl</kbd> temporarily bypasses snapping. If Alt is held over empty space (nothing to act on), the click falls through so Alt-drag still orbits the Scene View camera as usual.</p>
+      </div>
+    </section>
+
+    <section id="extrude">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Extrude Edge Mode</h2>
+      <p class="desc">Toggle <strong>Extrude Edge</strong> in the Inspector's Scene View Edit Mode selector to grow a shape from one of its edges — useful for pushing out a corridor or ledge without redrawing the whole outline.</p>
+      <ul class="plain">
+        <li>Click-drag an edge outward; two new vertices are inserted and dragged along the edge's outward normal.</li>
+        <li>Hold <kbd>Shift</kbd> to drag freely instead of snapping to the normal direction.</li>
+        <li>Releasing without crossing the drag threshold cancels cleanly — no zero-area sliver gets left behind.</li>
+        <li>Hold <kbd>Alt</kbd> while clicking a vertex to edit it instead, without leaving Extrude Edge mode — see <a href="#editing">Scene View Editing</a>.</li>
+      </ul>
+    </section>
+
+    <section id="snapping">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Snapping</h2>
+      <p class="desc">Two independent snapping systems, both on by default and toggleable from the Inspector while a shape is selected:</p>
+      <ul class="plain">
+        <li><strong>Grid Snap</strong> &mdash; snaps dragged vertices and edges to the current <strong>Grid Size</strong> in Unity's Scene View <strong>Grid and Snap</strong> overlay.</li>
+        <li><strong>Angle Snap</strong> — if an edge to a neighboring vertex is within a few degrees of horizontal/vertical, it's forced perfectly level, so you don't get accidental micro-slopes.</li>
+      </ul>
+      <p>The two combine as: angle-snap first (straight edges win), then grid-snap the result. Hold <kbd>Ctrl</kbd> while dragging to temporarily disable both.</p>
+    </section>
+
+    <section id="grid-ruler">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Grid Ruler (Edit-Time)</h2>
+      <p class="desc">While editing, a numbered grid overlay is drawn on Unity's current Scene View grid, using the same size, origin, and rotation as snapping. When zoomed out, it skips cells by whole-number multiples so it stays readable without ever drifting off-grid. This is purely an editing aid; it doesn't render at runtime. Toggle it from the same Inspector panel as the snapping options.</p>
+    </section>
+
+    <section id="grid-shader">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Runtime Visual Materials</h2>
+      <p class="desc">Flat, uniformly colored platforms make it hard to <em>feel</em> the camera or character moving. <code>ProtoGridUnlit.shader</code> solves that with a two-tier grid and ruler-style tick marks, rendered in Play Mode and in builds — not just in the Editor.</p>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Major / minor grid</h4>
+          <p>A coarse grid (your configured cell size) subdivided by a finer one, both computed from world-space position so adjacent shapes' grids line up seamlessly, like continuous graph paper.</p>
+        </div>
+        <div class="card">
+          <h4>Ruler ticks</h4>
+          <p>Wherever a minor gridline meets one of a shape's own (near) horizontal or vertical edges, it's drawn bolder — like a tick mark on a ruler. Diagonal edges intentionally get none, to avoid visual clutter.</p>
+        </div>
+      </div>
+
+      <p>Works with both the standard Universal Renderer and URP's 2D Renderer — the shader ships two passes (<code>UniversalForward</code> and <code>Universal2D</code>) so it renders correctly either way. Per-shape fill color and the shape's own edge list (used for tick placement) are pushed per-instance via <code>MaterialPropertyBlock</code>; every shape otherwise shares one material instance.</p>
+
+      <div class="callout tip">
+        <span class="callout-title">Tuning the look</span>
+        <p>Select any <code>ProtoShape2D</code>, open its Mesh Renderer material in the Inspector, and adjust cell sizes, line thickness, colors, and tick length live — see the <a href="#material-properties">Material Properties reference</a> below.</p>
+      </div>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Solid</h4>
+          <p>A simple texture-free fill driven only by each shape's <strong>Fill Color</strong>, ideal for clean blockouts and flat-color level art.</p>
+        </div>
+        <div class="card">
+          <h4>Cavern Stone</h4>
+          <p>Texture-free layered rock with surface grain and irregular procedural cracks, useful for cave walls and natural platforms.</p>
+        </div>
+        <div class="card">
+          <h4>Mossy Ruins</h4>
+          <p>Offset masonry blocks with chipped edges and moss patches, useful for temples, dungeons, and overgrown architecture.</p>
+        </div>
+      </div>
+
+      <p>Use <strong>Visual Style</strong> in the <code>ProtoShape2D</code> Inspector to switch among Proto Grid, Solid, Cavern Stone, and Mossy Ruins. Every bundled style supports the Universal2D and UniversalForward passes, uses each shape's <strong>Fill Color</strong>, and exposes shared <strong>Outline</strong> and <strong>Inner Shadow</strong> groups. Outline has an explicit checkbox, solid-black default color, and Thickness. Inner Shadow has Color, Blend Mode (Multiply by default), Choke, and Size. Both follow the real polygon boundary and are stored per shape. A Custom material manages its own effects and does not receive these bundled controls.</p>
+    </section>
+
+    <section id="proto-label">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Proto Label 2D</h2>
+      <p class="desc"><code>ProtoLabel2D</code> is a lightweight text marker for naming areas ("Water Temple Entrance", "Boss Arena"). It has no runtime visual — it's an authoring/export-only concern, visible as Scene View text (whether or not its GameObject is selected) and included in PNG/JSON exports.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>Text</code></td><td>string</td><td>The label's content.</td></tr>
+          <tr><td><code>Color</code></td><td>Color</td><td>Text color in the Scene View and in PNG exports.</td></tr>
+          <tr><td><code>World Font Size</code></td><td>float</td><td>World-unit size. In the Scene View this is converted to an actual screen pixel size from the current zoom (so it visibly grows/shrinks with the value and scales with zoom, like any world-space object); on export it's multiplied by the export's Pixels Per Unit.</td></tr>
+          <tr><td><code>Alignment</code></td><td>TextAnchor</td><td>Anchors the text against the label's own transform position.</td></tr>
+        </tbody>
+      </table>
+      <p>Position is just the GameObject's transform, so the standard Move tool (and its built-in Undo) repositions it — no custom Scene View dragging needed. Drawing uses Unity's <code>[DrawGizmo]</code> attribute rather than a custom Editor's <code>OnSceneGUI</code>, specifically so labels stay visible whether or not their GameObject is selected.</p>
+    </section>
+
+    <section id="proto-player">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Proto Player</h2>
+      <p class="desc">A minimal, movement-only 2D character so you can actually walk your blockout and feel whether traversal works, not just look at it. <code>GameObject &gt; 2D Object &gt; Proto Player</code> creates one fully-configured GameObject — no prefab asset, no setup. It's a simplified port of a fuller character controller (combat, combos, health, dash, animation state machines) with everything except walking and jumping stripped out.</p>
+
+      <div class="grid-cards">
+        <div class="card">
+          <h4>Walk</h4>
+          <p><code>CharacterMovement</code> — an acceleration/deceleration curve, snapping to a minimum starting speed, and an air-control penalty that <code>PlayerJump</code> applies while airborne.</p>
+        </div>
+        <div class="card">
+          <h4>Jump</h4>
+          <p><code>PlayerJump</code> — buffered jump input (a press just before landing still registers), coyote time (a press just after leaving a ledge still registers), and jump cutting (tap vs. hold Space gives a shorter vs. full jump).</p>
+        </div>
+        <div class="card">
+          <h4>Ground detection</h4>
+          <p><code>CharacterGroundChecker</code> — Physics2D contact-based, with dynamic friction enabled by default. Newly created Proto Players use the bundled <code>PlayerAirborne.physicsMaterial2D</code> and <code>PlayerGrounded.physicsMaterial2D</code> assets so the character doesn't "stick" to walls and ledges.</p>
+        </div>
+        <div class="card">
+          <h4>Input</h4>
+          <p><code>CharacterInputController</code> + a bundled <code>ProtoPlayerInputActions</code> asset (Move + Jump only, WASD/arrows/gamepad stick + Space/gamepad South) — self-contained, doesn't depend on your project's own Input Actions setup.</p>
+        </div>
+        <div class="card">
+          <h4>Facing direction</h4>
+          <p><code>CharacterSpriteFlipper</code> — flips the SpriteRenderer horizontally to face the current movement direction, driven by <code>CharacterMovement.OnDirectionChanged</code> rather than polling every frame.</p>
+        </div>
+      </div>
+
+      <p>No animation, no combat, no health — the sprite renderer just shows a fixed placeholder sprite, flipped to face left/right as you move. Ground detection defaults to the <strong>Default</strong> physics layer, matching where <code>ProtoShape2D</code> objects already live, so it works immediately against your blockout with no Layer/Tag setup.</p>
+
+      <div class="callout tip">
+        <span class="callout-title">Tuning it</span>
+        <p>Every tunable (move speed, acceleration, jump force, jump buffer window, air control, ground friction) is a normal serialized field on the respective component — select the Proto Player and adjust them in the Inspector like any other component.</p>
+      </div>
+    </section>
+
+    <section id="proto-shape-group">
+      <span class="section-kicker">Core Concepts</span>
+      <h2>Proto Shape Group</h2>
+      <p class="desc"><code>ProtoShapeGroup</code> is a purely organizational marker component (<code>GameObject &gt; 2D Object &gt; Proto Shape Group</code>) — parent a set of <code>ProtoShape2D</code>/<code>ProtoLabel2D</code> objects under it in the Hierarchy, and its Inspector (styled to match <code>ProtoShape2D</code>'s, with the same banner header and collapsible sections) shows a <strong>Group Contents</strong> section reporting how many it found, plus an <strong>Export This Group</strong> section with its own <strong>Export PNG...</strong> / <strong>Export JSON...</strong> buttons.</p>
+      <p>These open the exact same export windows as <code>Tools &gt; Level Proto &gt; Export PNG/JSON</code> — same options, same code — just pre-scoped to that group's own hierarchy instead of the whole active scene. Useful for exporting one room/section of a larger level on its own, without touching everything else in the scene.</p>
+      <div class="callout tip">
+        <span class="callout-title">Scoping</span>
+        <p>"Under this group" means <code>GetComponentsInChildren</code> from the group's own GameObject — direct children, grandchildren, any depth, as long as they're parented somewhere underneath it in the Hierarchy. It does not do anything at runtime; it's authoring-only.</p>
+      </div>
+    </section>
+
+    <section id="export-png">
+      <span class="section-kicker">Exporting</span>
+      <h2>PNG Export</h2>
+      <p class="desc"><code>Tools &gt; Level Proto &gt; Export PNG</code> rasterizes every <code>ProtoShape2D</code>/<code>ProtoLabel2D</code> in the active scene straight from their data — vertex lists and text, not a camera screenshot — sized by a configurable Pixels Per Unit.</p>
+
+      <table>
+        <thead><tr><th>Option</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>Pixels Per Unit</code></td><td>Scale factor from world units to output pixels. Defaults from Project Settings.</td></tr>
+          <tr><td><code>Transparent Background</code></td><td>Off switches to a solid background color instead.</td></tr>
+          <tr><td><code>Include Labels</code></td><td>Bakes every <code>ProtoLabel2D</code>'s text into the export.</td></tr>
+          <tr><td><code>Include Grid Pattern</code></td><td>Bakes each shape's major/minor grid and ruler ticks into the export, matching what the material shows in-Editor, instead of a flat fill.</td></tr>
+          <tr><td><code>Font (optional)</code></td><td>Override font for label text; otherwise a built-in fallback is used automatically.</td></tr>
+        </tbody>
+      </table>
+
+      <p>The output size is estimated live before you export, and very large images (beyond 8192px on an axis) prompt for confirmation before allocating memory.</p>
+
+      <div class="callout tip">
+        <span class="callout-title">How the fill works</span>
+        <p>Polygons are filled with a CPU scanline algorithm (even-odd rule) directly from world-space vertices — correct for concave shapes and free of the seams a per-triangle rasterization could show at shared mesh edges. Grid/tick shading, when enabled, is a hand-ported match of the runtime shader's math, sampled per output pixel.</p>
+      </div>
+    </section>
+
+    <section id="export-json">
+      <span class="section-kicker">Exporting</span>
+      <h2>JSON Export</h2>
+      <p class="desc"><code>Tools &gt; Level Proto &gt; Export JSON</code> dumps the prototype's raw data — local-space vertices plus each shape's full transform, so a consumer can reconstruct exact world-space geometry rather than working from a flattened approximation.</p>
+
+      <h3>Schema</h3>
+      <pre><button class="copy-btn" onclick="copyCode(this)">Copy</button><code>{
+  "formatVersion": 4,
+  "sceneName": "SampleScene",
+  "exportedAtUtc": "2026-08-02T14:03:11.0000000Z",
+  "shapes": [
+    {
+      "name": "Proto Shape",
+      "position": { "x": 0, "y": 0, "z": 0 },
+      "rotation": { "x": 0, "y": 0, "z": 0, "w": 1 },
+      "scale":    { "x": 1, "y": 1, "z": 1 },
+      "localVertices": [
+        { "x": -1, "y": -1 },
+        { "x":  1, "y": -1 },
+        { "x":  1, "y":  1 },
+        { "x": -1, "y":  1 }
+      ],
+      "fillColor": { "r": 1, "g": 1, "b": 1, "a": 1 },
+      "outlineEnabled": false,
+      "outlineColor": { "r": 0, "g": 0, "b": 0, "a": 1 },
+      "outlineWidth": 0.06,
+      "innerShadowEnabled": false,
+      "innerShadowColor": { "r": 0, "g": 0, "b": 0, "a": 0.5 },
+      "innerShadowBlendMode": "Multiply",
+      "innerShadowChoke": 0.15,
+      "innerShadowSize": 0.2,
+      "generateCollider": true,
+      "sortingOrder": 0,
+      "tags": "ground,walkable"
+    }
+  ],
+  "labels": [
+    {
+      "name": "Proto Label",
+      "position": { "x": 4, "y": 1.5, "z": 0 },
+      "text": "Boss Arena",
+      "color": { "r": 1, "g": 1, "b": 1, "a": 1 },
+      "worldFontSize": 1.0,
+      "alignment": "MiddleCenter"
+    }
+  ]
+}</code></pre>
+
+      <p>Colors are linear 0–1 float components (not 0–255). <code>alignment</code> is the <code>TextAnchor</code> enum name as a string. <code>tags</code> is whatever free text you typed into the shape's Tags field - the package doesn't parse or use it, it's purely a hook for your own JSON-consuming tooling (e.g. a comma-separated list, a category name, a pipe-delimited key set - your call). The window shows a live count of shapes/labels found before you export, plus a <strong>Pretty Print</strong> toggle for human-readable vs. compact output.</p>
+    </section>
+
+    <section id="settings">
+      <span class="section-kicker">Reference</span>
+      <h2>Project Settings</h2>
+      <p class="desc">Shared defaults live in a <code>ProtoShapeSettings</code> asset, lazily created the first time it's needed at <code>Assets/Settings/ProtoLevelSettings.asset</code>.</p>
+      <table>
+        <thead><tr><th>Setting</th><th>Default</th><th>Used by</th></tr></thead>
+        <tbody>
+          <tr><td><code>Default Export Pixels Per Unit</code></td><td>32</td><td>Initial value in the PNG export window.</td></tr>
+          <tr><td><code>Default Fill Color</code></td><td>White</td><td>Reserved for future shape defaults.</td></tr>
+          <tr><td><code>Snap Angle Tolerance Degrees</code></td><td>5°</td><td>How close to horizontal/vertical an edge must be to angle-snap.</td></tr>
+          <tr><td><code>Grid Ruler Color</code></td><td>White, 35% alpha</td><td>Edit-time Scene View ruler lines/labels.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout tip">
+        <span class="callout-title">Color palettes</span>
+        <p>A <code>ProtoColorPalette</code> ScriptableObject type is also available (<code>Create &gt; Level Proto &gt; Proto Color Palette</code>) for defining named swatches like Platform/Wall/Hazard/Water. It's not yet wired into the Inspector as a quick-pick UI in this version — assign colors via the normal Fill Color field for now.</p>
+      </div>
+    </section>
+
+    <section id="material-properties">
+      <span class="section-kicker">Reference</span>
+      <h2>Material Properties — Proto Grid Unlit</h2>
+      <p class="desc">All exposed on the material Inspector for <code>Level Proto/Proto Grid Unlit</code>. Sizes/lengths are in world units.</p>
+      <table>
+        <thead><tr><th>Property</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>_BaseColor</code></td><td>White</td><td>Set per-shape from <code>Fill Color</code>; not usually edited on the material directly.</td></tr>
+          <tr><td><code>_MajorLineColor</code></td><td>Black, 35%</td><td>Coarse grid line color.</td></tr>
+          <tr><td><code>_MajorCellSize</code></td><td>1</td><td>Spacing between major gridlines.</td></tr>
+          <tr><td><code>_MajorLineThickness</code></td><td>0.025</td><td>Half-width of major lines.</td></tr>
+          <tr><td><code>_MinorLineColor</code></td><td>Black, 12%</td><td>Fine subdivision grid line color.</td></tr>
+          <tr><td><code>_MinorCellSize</code></td><td>0.25</td><td>Spacing between minor gridlines (4 per major cell by default).</td></tr>
+          <tr><td><code>_MinorLineThickness</code></td><td>0.01</td><td>Half-width of minor lines.</td></tr>
+          <tr><td><code>_TickColor</code></td><td>Black, 50%</td><td>Ruler tick mark color.</td></tr>
+          <tr><td><code>_TickThickness</code></td><td>0.018</td><td>Half-width of tick marks.</td></tr>
+          <tr><td><code>_TickLength</code></td><td>0.15</td><td>How far from each qualifying edge tick marks extend.</td></tr>
+        </tbody>
+      </table>
+      <p>Per-shape, non-Inspector properties set automatically via <code>MaterialPropertyBlock</code>: <code>_EdgeA</code> / <code>_EdgeB</code> (the shape's local-space edge list, capped at 64 edges) and <code>_EdgeCount</code> — these drive ruler-tick placement and aren't meant to be hand-edited.</p>
+      <h3>Bundled visual styles</h3>
+      <p><code>Level Proto/Proto Solid</code> uses only <code>_BaseColor</code>. <code>Level Proto/Proto Cavern Stone</code> exposes stone palette, texture/strata scale, crack scale/width, and surface-detail controls. <code>Level Proto/Proto Mossy Ruins</code> exposes block and mortar sizes, stone/moss palettes, surface scale, moss scale, and moss coverage. Along with Proto Grid, all four receive per-shape Fill Color, Outline, Inner Shadow, and evaluated boundary data through a <code>MaterialPropertyBlock</code>.</p>
+    </section>
+
+    <section id="menu-reference">
+      <span class="section-kicker">Reference</span>
+      <h2>Menu Reference</h2>
+      <table>
+        <thead><tr><th>Menu</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>GameObject &gt; 2D Object &gt; Proto Shape</code></td><td>Creates a new <code>ProtoShape2D</code> with a default 2×2 quad.</td></tr>
+          <tr><td><code>GameObject &gt; 2D Object &gt; Proto Label</code></td><td>Creates a new <code>ProtoLabel2D</code>.</td></tr>
+          <tr><td><code>GameObject &gt; 2D Object &gt; Proto Player</code></td><td>Creates a fully-configured, walkable/jumpable Proto Player.</td></tr>
+          <tr><td><code>GameObject &gt; 2D Object &gt; Proto Shape Group</code></td><td>Creates a new <code>ProtoShapeGroup</code> organizational marker.</td></tr>
+          <tr><td><code>Tools &gt; Level Proto &gt; Export PNG</code></td><td>Opens the PNG export window, scoped to the active scene. (A <code>ProtoShapeGroup</code>'s Inspector opens the same window pre-scoped to just that group.)</td></tr>
+          <tr><td><code>Tools &gt; Level Proto &gt; Export JSON</code></td><td>Opens the JSON export window, scoped to the active scene. (Same group-scoping as PNG export.)</td></tr>
+          <tr><td>Scene View toolbar</td><td><strong>Draw Proto Shape</strong> tool for authoring a new shape by clicking points.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="architecture">
+      <span class="section-kicker">Reference</span>
+      <h2>Package Architecture</h2>
+      <p class="desc">Namespace <code>cloudedstudio.LevelProto2dMetroidvania</code> (Runtime), with editor-only types nested under <code>cloudedstudio.LevelProto2dMetroidvania.Editor</code>. Split into two assemblies so nothing editor-only leaks into player builds.</p>
+      <pre><code>Assets/CloudedStudio/LevelProto2dMetroidvania/
+├── Runtime/            ProtoShape2D, ProtoLabel2D, geometry (triangulator,
+│                        polygon utilities), the grid shader
+│   └── Player/          Proto Player's components, bundled sprite and
+│                        Input Actions asset
+├── Editor/              Scene View editors/tools, snapping, grid ruler,
+│                        PNG/JSON exporters, project settings
+└── Tests/Editor/        EditMode unit tests (triangulator, rasterizer,
+                          polygon utilities)</code></pre>
+    </section>
+
+    <section id="limitations">
+      <span class="section-kicker">Reference</span>
+      <h2>Known Limitations</h2>
+      <ul class="plain">
+        <li>Interactive Scene View vertex/edge dragging works on one selected shape at a time; multi-selection still supports shared-field edits (color, collider toggle, etc.).</li>
+        <li>The grid shader's edge list (used for ruler ticks) is capped at 64 edges per shape — beyond that, extra edges simply don't get tick marks; the grid pattern itself is unaffected.</li>
+        <li>Ruler ticks only appear on edges within roughly 2° of horizontal or vertical, by design — diagonal edges show the grid pattern but no ticks, to avoid visual clutter where vertical and horizontal ticks would otherwise overlap.</li>
+        <li>Text rendering (Scene View labels and PNG export) uses Unity's legacy <code>Font</code> glyph API, whose built-in resource name has changed across Unity versions. The package falls back automatically (<code>LegacyRuntime.ttf</code> → <code>Arial.ttf</code> → an OS font by name) — worth a quick visual check after exporting with labels on a new Unity version.</li>
+        <li>Self-intersecting polygons are detected and flagged, not auto-corrected; fix the outline to resume normal mesh/collider updates.</li>
+        <li>Proto Player has no animation - it's deliberately just a movement/jump rig for playtesting traversal, not a character template. It does flip to face its movement direction (<code>CharacterSpriteFlipper</code>); untick "Default Faces Right" on that component if your sprite's source artwork faces left instead. Ground detection defaults to the Default physics layer; if your blockout uses other layers for ground, update <code>CharacterGroundChecker</code>'s Ground Layer field.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <span>Level Proto 2D Metroidvania · v0.1.0</span>
+      <span>See <code>CHANGELOG.md</code> for release history and <code>LICENSE.md</code> for terms.</span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // Sidebar toggle (mobile)
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('sidebarToggle');
+  toggle.addEventListener('click', function () {
+    sidebar.classList.toggle('open');
+  });
+  sidebar.querySelectorAll('a').forEach(function (link) {
+    link.addEventListener('click', function () { sidebar.classList.remove('open'); });
+  });
+
+  // Scrollspy: highlight the nav link for the section currently in view
+  var navLinks = Array.prototype.slice.call(sidebar.querySelectorAll('a[href^="#"]'));
+  var sections = navLinks
+    .map(function (link) { return document.querySelector(link.getAttribute('href')); })
+    .filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var id = entry.target.getAttribute('id');
+        navLinks.forEach(function (link) {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+
+    sections.forEach(function (section) { observer.observe(section); });
+  }
+
+  function copyCode(btn) {
+    var code = btn.parentElement.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(function () {
+      var original = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(function () { btn.textContent = original; }, 1200);
+    });
+  }
+</script>
+
+</body>
+</html>

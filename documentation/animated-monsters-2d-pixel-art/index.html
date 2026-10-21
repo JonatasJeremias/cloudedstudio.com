@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Documentation for Animated Monsters 2D Pixel Art by Clouded Studio: prefabs, animation clips, pixel settings, and demo scenes.">
+  <title>Animated Monsters 2D Pixel Art — Documentation</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0e14;color:#b8c6d4;line-height:1.65}
+    *{box-sizing:border-box}body{margin:0}a{color:#66c0f4;text-underline-offset:3px}a:hover{color:#fff}
+    main{max-width:960px;margin:auto;padding:36px 24px 72px}header{padding:24px 0 32px;border-bottom:1px solid #26313f}
+    h1,h2,h3,strong{color:#f4f7fb}h1{font-size:clamp(28px,5vw,42px);line-height:1.2;margin:20px 0 16px}h2{font-size:24px;margin:42px 0 16px}h3{font-size:18px;margin-top:26px}
+    .eyebrow{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:#66c0f4}.pending{color:#e9c783;font-size:14px}.actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 0}.button{display:inline-block;text-decoration:none;border:1px solid #344252;border-radius:8px;padding:10px 18px;color:#f4f7fb;font-weight:600}.primary{background:#66c0f4;border-color:#66c0f4;color:#0b0e14}.primary:hover{background:#fff;color:#0b0e14}
+    nav{display:flex;flex-wrap:wrap;gap:10px 24px;margin:24px 0}code{font-size:.92em;background:#18212d;padding:2px 6px;border-radius:4px}table{border-collapse:collapse;width:100%;margin:18px 0}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #26313f;padding:12px 10px}th{color:#f4f7fb}ul,ol{padding-left:23px}li{margin:8px 0}footer{border-top:1px solid #26313f;margin-top:48px;padding-top:20px;font-size:14px}.table-wrap{overflow:auto}a:focus-visible{outline:2px solid #66c0f4;outline-offset:5px}
+  </style>
+</head>
+<body>
+<main>
+  <a href="../../index.html#assets">← Clouded Studio assets</a>
+  <header>
+    <span class="eyebrow">Clouded Studio · Unity asset documentation</span>
+    <h1>Animated Monsters 2D Pixel Art</h1>
+    <p>A collection of 46 animated pixel-art characters, with 468 animation clips, individual Animator Controllers, and ready-to-use character prefabs.</p>
+    <p class="pending">Submitted to the Unity Asset Store. The listing is awaiting approval and may not be accessible yet.</p>
+    <div class="actions">
+      <a class="button primary" href="../../demo/animated-monsters-2d-pixel-art/index.html">Play Demo ↗</a>
+      <a class="button" href="https://assetstore.unity.com/packages/slug/412344" target="_blank" rel="noopener noreferrer">Unity Asset Store ↗</a>
+    </div>
+  </header>
+  <nav aria-label="Documentation sections">
+    <a href="#quick-start">Quick start</a><a href="#contents">Package contents</a><a href="#animations">Animations</a><a href="#pixels">Pixel settings</a><a href="#demos">Demo scenes</a>
+  </nav>
+  <section id="quick-start">
+    <h2>Quick start</h2>
+    <ol>
+      <li>Import the package into your Unity project. The included demos were prepared and validated with <strong>Unity 6.3 LTS and URP 2D</strong>.</li>
+      <li>Open <code>Assets/CloudedStudio/Animated Monsters 2D Pixel Art/Prefabs</code>.</li>
+      <li>Drag a character prefab into your scene. Its SpriteRenderer and Animator are already connected to the character's sprites and controller.</li>
+      <li>Press Play. The character starts in its default <strong>Idle</strong> or <strong>Flying Idle</strong> state.</li>
+      <li>Use the character's clips and Animator states to connect animations to your own game logic.</li>
+    </ol>
+    <p>Prefabs use the URP 2D <code>Sprite-Lit-Default</code> material. Include a 2D light in the scene. If using a different rendering setup, assign a compatible sprite material.</p>
+  </section>
+  <section id="contents">
+    <h2>Package contents</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Folder</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td><code>Prefabs</code></td><td>46 character prefabs, each with SpriteRenderer and Animator.</td></tr>
+        <tr><td><code>Sprites/[Character]</code></td><td>Individual animation sprite sheets, imported and sliced as Multiple sprites.</td></tr>
+        <tr><td><code>Sprites/[Character]/Animations</code></td><td>Animation clips and one Animator Controller for that character.</td></tr>
+        <tr><td><code>Aseprite</code></td><td>Character source files with animation tags.</td></tr>
+        <tr><td><code>Demo</code></td><td>The complete character gallery, individual animation viewer, and their supporting scripts.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+  <section id="animations">
+    <h2>Animations</h2>
+    <p>Clips are authored at <strong>12 frames per second</strong>. The available actions vary by character: the collection includes Idle, locomotion, flying cycles, attacks, reactions, gestures, and death animations.</p>
+    <p>Continuous cycles have Loop Time enabled. One-off actions keep Loop Time disabled. The individual demo intentionally replays every selected action so it can be inspected repeatedly; it does not change the original clips' loop settings.</p>
+    <p>Controllers contain the corresponding animation states. Play a state through your Animator or add transitions that suit your project.</p>
+  </section>
+  <section id="pixels">
+    <h2>Pixel settings</h2>
+    <ul>
+      <li><strong>Sprite Mode:</strong> Multiple.</li>
+      <li><strong>Pixels Per Unit:</strong> 32.</li>
+      <li><strong>Filter Mode:</strong> Point.</li>
+      <li><strong>Pivot:</strong> Bottom Center.</li>
+      <li><strong>Frame cells:</strong> 64 × 64 or 128 × 128, depending on the character.</li>
+    </ul>
+    <p>Keep Point filtering and use integer enlargement to retain crisp pixels. Avoid resizing individual characters to fill the same area: their original proportions and pixel density should remain consistent.</p>
+  </section>
+  <section id="demos">
+    <h2>Demo scenes</h2>
+    <h3>AllMonstersIdle</h3>
+    <p>Shows all 46 characters together, in an eight-column grid, playing their default looping Idle animations. The pixel-perfect camera applies the same integer enlargement to the whole collection.</p>
+    <h3>MonsterShowcase</h3>
+    <p>Browse one character at a time with <strong>Previous / Next</strong> or the arrow keys. Click an animation button to inspect it. The viewer uses a fixed 4× enlargement and reserves space for the character's actions.</p>
+    <p>Use <strong>Individual</strong> in the gallery to open the character viewer, and <strong>View all</strong> to return. Include both scenes in your build's scene list to enable this navigation in a player build.</p>
+    <p>The browser demo starts in the complete gallery. A desktop browser or a landscape viewport is recommended for the complete interface.</p>
+  </section>
+  <footer>Clouded Studio · Animated Monsters 2D Pixel Art</footer>
+</main>
+</body>
+</html>

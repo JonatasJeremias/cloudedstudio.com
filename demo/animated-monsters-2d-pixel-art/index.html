@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Play the Animated Monsters 2D Pixel Art demo by Clouded Studio. Browse 46 characters and their animations in your browser.">
+  <title>Animated Monsters 2D Pixel Art — Play Demo</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0b0e14;color:#e8edf5}
+    *{box-sizing:border-box}body{margin:0}header{min-height:52px;padding:8px 16px;display:flex;align-items:center;gap:20px;border-bottom:1px solid #26313f}h1{font-size:15px;line-height:1.4;margin:0;font-weight:600;flex:1}a{color:#9eb2c0;text-decoration:none;font-size:13px;white-space:nowrap}a:hover{color:#66c0f4}button{font:inherit;font-size:13px;border:1px solid #344252;border-radius:6px;background:#17212d;color:#f4f7fb;padding:7px 13px;cursor:pointer;white-space:nowrap}button:hover:enabled{border-color:#66c0f4}button:disabled{opacity:.5;cursor:default}a:focus-visible,button:focus-visible{outline:2px solid #66c0f4;outline-offset:3px}
+    .player{position:relative;max-width:1600px;margin:8px auto;background:#000}.viewport{overflow:auto}canvas{display:block;width:100%;height:calc(100dvh - 68px);min-width:656px;min-height:480px;background:#000;image-rendering:pixelated;outline:none}canvas:fullscreen{width:100vw!important;height:100vh!important;min-width:0;min-height:0}
+    .loading{position:absolute;inset:0;display:grid;place-content:center;gap:16px;text-align:center;background:#0b0e14;padding:24px}.loading[hidden]{display:none}progress{accent-color:#66c0f4;width:min(280px,70vw);height:8px;margin:auto}.loading p{margin:0;font-size:14px;max-width:520px;line-height:1.6}#retry[hidden]{display:none}
+    @media(max-width:600px){header{gap:12px;padding:8px 12px}h1{font-size:12px}button{font-size:12px;padding:7px 9px}}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="../../index.html#assets">← Assets</a>
+    <h1>Animated Monsters 2D Pixel Art</h1>
+    <button id="fullscreen" type="button" disabled>Full screen</button>
+  </header>
+  <main class="player" aria-label="Interactive character demo">
+    <div class="viewport"><canvas id="unity-canvas" width="1280" height="800" tabindex="0" aria-label="Animated Monsters Unity demo"></canvas></div>
+    <div id="loading" class="loading" aria-live="polite">
+      <p id="loading-message">Loading the demo…</p>
+      <progress id="progress" max="1" value="0" aria-label="Demo download progress"></progress>
+      <button id="retry" type="button" hidden>Reload demo</button>
+    </div>
+  </main>
+  <script>
+    const canvas = document.querySelector('#unity-canvas');
+    const loading = document.querySelector('#loading');
+    const message = document.querySelector('#loading-message');
+    const progressBar = document.querySelector('#progress');
+    const fullScreenButton = document.querySelector('#fullscreen');
+    const config = {"dataUrl": "Build/3fdcdd468f6c08b46df57796ac90ec48.data.unityweb", "frameworkUrl": "Build/4ef297afbec7fcdc45d6a1ba7b8b2b1a.framework.js.unityweb", "codeUrl": "Build/63552bd49ff435ad2484bea806aaf294.wasm.unityweb", "streamingAssetsUrl": "StreamingAssets", "companyName": "Clouded Studio", "productName": "Animated Monsters 2D Pixel Art", "productVersion": "1.0"};
+    config.devicePixelRatio = 1;
+    config.showBanner = (text, type) => {
+      if (type === 'error') showError(text);
+      else console.warn(text);
+    };
+    function showError(detail) {
+      document.documentElement.dataset.demoState = 'error';
+      loading.hidden = false;
+      message.textContent = 'The demo could not start. Please use a current desktop browser with WebGL 2 enabled.';
+      progressBar.hidden = true;
+      document.querySelector('#retry').hidden = false;
+      console.error(detail);
+    }
+    document.querySelector('#retry').addEventListener('click', () => location.reload());
+    const loader = document.createElement('script');
+    loader.src = 'Build/ee4e9aa78bc8a65c5b4e287c41007558.loader.js';
+    loader.onerror = () => showError('Unable to download the Unity loader.');
+    loader.onload = () => {
+      createUnityInstance(canvas, config, progress => { progressBar.value = progress; })
+        .then(instance => {
+          document.documentElement.dataset.demoState = 'ready';
+          loading.hidden = true;
+          fullScreenButton.disabled = false;
+          fullScreenButton.addEventListener('click', () => instance.SetFullscreen(1));
+          canvas.focus();
+        })
+        .catch(showError);
+    };
+    document.body.appendChild(loader);
+  </script>
+</body>
+</html>

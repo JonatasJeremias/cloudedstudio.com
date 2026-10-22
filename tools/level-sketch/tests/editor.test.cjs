@@ -34,6 +34,7 @@ async function setup(stored = null, failStorage = false) {
     }
     click() { return this.fire('click'); }
     setAttribute(k, v) { this.attributes[k] = v; }
+    replaceChildren(...items) { this.children = items; }
     getBoundingClientRect() { return { left: 0, top: 0, width: 900, height: 640 }; }
     getContext() { return this.context; }
     setPointerCapture() {} hasPointerCapture() { return false; } releasePointerCapture() {}
@@ -109,14 +110,17 @@ test('rectangles snap in both directions, persist, and restore after reopening',
 test('terrain and decoration stay independent; undo/redo persists the final branch', async () => {
   const app = await setup();
   await app.stroke([300, 240], [410, 320]);
-  await app.choose('data-action', 'decorate'); await app.stroke([300, 240], [400, 310]);
+  await app.choose('data-mode', 'decoration'); await app.choose('data-action', 'fill');
+  await app.stroke([300, 240], [400, 310]);
+  await app.choose('data-mode', 'terrain');
   await app.choose('data-action', 'fill'); await app.stroke([320, 250], [340, 270]);
-  assert.deepEqual(app.saved().operations.map((o) => o.action), ['remove', 'decorate', 'fill']);
+  assert.deepEqual(app.saved().operations.map((o) => [o.mode, o.action, o.layerId]),
+    [['terrain', 'remove', null], ['decoration', 'fill', 'layer-1'], ['terrain', 'fill', null]]);
   await app.byId.undo.click(); await settle(); assert.equal(app.saved().operations.length, 2);
   await app.byId.redo.click(); await settle(); assert.equal(app.saved().operations.length, 3);
   await app.byId.undo.click(); await app.stroke([340, 250], [370, 280]);
   assert.equal(app.byId.redo.disabled, true);
-  assert.deepEqual(app.saved().operations.map((o) => o.action), ['remove', 'decorate', 'fill']);
+  assert.deepEqual(app.saved().operations.map((o) => o.mode), ['terrain', 'decoration', 'terrain']);
 });
 
 test('two-finger navigation cancels tentative drawing and leaves no accidental marks', async () => {
@@ -166,4 +170,96 @@ test('storage unavailable still allows drawing and exporting, with an honest sta
   assert.equal(app.byId['save-state'].dataset.state, 'error');
   await app.byId['export-json'].click();
   assert.equal(JSON.parse(await app.blob().text()).operations.length, 1);
+});
+
+test('fill and remove target only the selected decoration layer with every brush', async () => {
+  const app = await setup();
+  await app.stroke([300, 240], [410, 320]);
+  await app.choose('data-mode', 'decoration'); await app.choose('data-action', 'fill');
+  await app.stroke([300, 240], [410, 320]);
+  await app.byId['add-layer'].click(); app.frame();
+  assert.equal(app.byId['decoration-layer'].value, 'layer-2');
+  for (const tool of ['rect', 'square', 'round']) {
+    await app.choose('data-tool', tool);
+    for (const action of ['fill', 'remove']) {
+      await app.choose('data-action', action); await app.stroke([300, 240], [410, 320]);
+      const op = app.saved().operations.at(-1);
+      assert.equal(op.mode, 'decoration'); assert.equal(op.layerId, 'layer-2');
+      assert.equal(op.action, action); assert.equal(op.tool, tool);
+    }
+  }
+  app.byId['decoration-layer'].value = 'layer-1'; await app.byId['decoration-layer'].fire('change');
+  await app.byId.undo.click(); await app.byId.redo.click(); await settle();
+  assert.equal(app.saved().operations.at(-1).layerId, 'layer-2');
+  await app.stroke([300, 240], [410, 320]);
+  assert.equal(app.saved().operations.at(-1).layerId, 'layer-1');
+  assert.equal(app.saved().operations[0].mode, 'terrain');
+});
+
+test('global and individual visibility preserve strokes and survive backups and reopening', async () => {
+  const app = await setup();
+  await app.choose('data-mode', 'decoration'); await app.choose('data-action', 'fill');
+  await app.stroke([300, 240], [410, 320]); await app.byId['add-layer'].click();
+  app.byId['layer-name'].value = 'Ruínas'; await app.byId['layer-name'].fire('input');
+  await app.stroke([300, 240], [410, 320]);
+  app.byId['show-layer'].checked = false; await app.byId['show-layer'].fire('change');
+  await app.byId['decorations-button'].click(); app.frame(); await app.window.fire('blur');
+  assert.equal(app.saved().operations.length, 2);
+  assert.equal(app.saved().layers[1].name, 'Ruínas');
+  assert.equal(app.saved().layers[1].visible, false);
+  assert.equal(app.saved().settings.showDecorations, false);
+  const restored = await setup(app.saved());
+  assert.equal(restored.byId['show-decorations'].checked, false);
+  assert.equal(restored.byId['show-layer'].checked, false);
+  assert.equal(restored.byId['decoration-layer'].value, 'layer-2');
+  await restored.stroke([300, 240], [410, 320]);
+  assert.equal(restored.saved().operations.length, 2); // No invisible drawing.
+  await restored.byId['decorations-button'].click();
+  await restored.stroke([300, 240], [410, 320]);
+  assert.equal(restored.saved().operations.length, 2); // Individual layer still hidden.
+  restored.byId['show-layer'].checked = true; await restored.byId['show-layer'].fire('change');
+  await restored.stroke([300, 240], [410, 320]);
+  assert.equal(restored.saved().operations.length, 3);
+  await restored.byId['export-json'].click();
+  const backup = JSON.parse(await restored.blob().text());
+  assert.equal(backup.layers.length, 2); assert.equal(backup.settings.layerId, 'layer-2');
+  assert.equal(backup.operations[0].layerId, 'layer-1');
+});
+
+test('version 1 maps and backups migrate without losing decoration erasers or terrain', async () => {
+  const rect = { tool: 'rect', size: 64, grid: 32, color: '#64b6ac', erase: false,
+    x: 512, y: 512, w: 256, h: 128 };
+  const old = { format: 'clouded-level-sketch', version: 1, width: 4096, height: 2560, name: 'Mapa antigo',
+    settings: { action: 'decorate', eraseDecoration: true }, operations: [
+      { ...rect, action: 'remove' }, { ...rect, action: 'decorate' },
+      { ...rect, action: 'decorate', erase: true }, { ...rect, action: 'fill' }
+    ] };
+  const app = await setup(old); await app.byId['export-json'].click();
+  const migrated = JSON.parse(await app.blob().text());
+  assert.equal(migrated.version, 2); assert.equal(migrated.layers.length, 1);
+  assert.equal(migrated.name, old.name);
+  assert.equal(migrated.settings.mode, 'decoration'); assert.equal(migrated.settings.action, 'remove');
+  assert.deepEqual(migrated.operations.map((o) => [o.mode, o.action, o.layerId]), [
+    ['terrain', 'remove', null], ['decoration', 'fill', 'layer-1'],
+    ['decoration', 'remove', 'layer-1'], ['terrain', 'fill', null]
+  ]);
+  const restored = await setup(migrated); await restored.byId['export-json'].click();
+  assert.deepEqual(JSON.parse(await restored.blob().text()), migrated);
+  const fresh = await setup();
+  fresh.byId['import-file'].files = [{ size: 1000, text: async () => JSON.stringify(old) }];
+  await fresh.byId['import-file'].fire('change'); await settle();
+  assert.equal(fresh.saved().version, 2); assert.equal(fresh.saved().operations.length, 4);
+});
+
+test('invalid layer references and duplicate IDs are rejected without replacing the map', async () => {
+  const app = await setup(); await app.stroke([300, 240], [410, 320]);
+  const before = JSON.stringify(app.saved());
+  const invalidReference = structuredClone(app.saved());
+  Object.assign(invalidReference.operations[0], { mode: 'decoration', layerId: 'missing' });
+  const duplicateIds = structuredClone(app.saved()); duplicateIds.layers.push({ ...duplicateIds.layers[0] });
+  for (const invalid of [invalidReference, duplicateIds]) {
+    app.byId['import-file'].files = [{ size: 1000, text: async () => JSON.stringify(invalid) }];
+    await app.byId['import-file'].fire('change');
+    assert.equal(JSON.stringify(app.saved()), before);
+  }
 });

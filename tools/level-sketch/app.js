@@ -4,7 +4,7 @@
 (() => {
   'use strict';
 
-  const WIDTH = 4096, HEIGHT = 2560, TILE = 256, CACHE_LIMIT = 160;
+  const WIDTH = 4096, HEIGHT = 2560, TILE = 256, CACHE_LIMIT = 160, MAX_LAYERS = 32;
   const SOLID = '#344252', OPEN = '#101820', STORAGE_KEY = 'current-map';
   const $ = (id) => document.getElementById(id);
   const canvas = $('map-canvas'), ctx = canvas.getContext('2d');
@@ -13,14 +13,17 @@
   decoration.width = decoration.height = TILE;
   const decorationCtx = decoration.getContext('2d');
   let operations = [], redoStack = [], active = null, database = null;
+  const initialLayers = () => [{ id: 'layer-1', name: 'Decoração 1', visible: true }];
+  let layers = initialLayers(), layerOptionsKey = '';
   let ready = false, dirty = false, revision = 0, saveTimer, toastTimer, frame;
   let viewport = { width: 1, height: 1, dpr: 1 };
   let view = { x: WIDTH / 2, y: HEIGHT / 2, scale: 0.3 };
-  let settings = { action: 'remove', tool: 'rect', size: 64, smooth: 55, grid: 32,
-    showGrid: true, color: '#64b6ac', eraseDecoration: false };
+  const defaultSettings = () => ({ mode: 'terrain', action: 'remove', tool: 'rect', size: 64, smooth: 55, grid: 32,
+    showGrid: true, color: '#64b6ac', layerId: 'layer-1', showDecorations: true });
+  let settings = defaultSettings();
   const pointers = new Map();
   let gesture = null, space = false, hover = null, shift = false;
-  const actionLabels = { remove: 'Remover', fill: 'Preencher', decorate: 'Decorar' };
+  const actionLabels = { remove: 'Remover', fill: 'Preencher' };
   const toolLabels = { rect: 'Retângulo', square: 'Quadrado', round: 'Redondo', hand: 'Mover' };
   const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
   const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -48,8 +51,8 @@
   }
 
   function documentData(includeView = true) {
-    const data = { format: 'clouded-level-sketch', version: 1, width: WIDTH, height: HEIGHT,
-      name: $('map-name').value, operations, settings: { ...settings } };
+    const data = { format: 'clouded-level-sketch', version: 2, width: WIDTH, height: HEIGHT,
+      name: $('map-name').value, operations, layers, settings: { ...settings } };
     if (includeView) data.view = { ...view };
     return data;
   }
@@ -133,8 +136,9 @@
   }
 
   function paintOperation(context, op) {
-    context.globalCompositeOperation = op.action === 'decorate' && op.erase ? 'destination-out' : 'source-over';
-    context.fillStyle = context.strokeStyle = op.action === 'remove' ? OPEN : op.action === 'fill' ? SOLID : op.color;
+    const isDecoration = op.mode === 'decoration';
+    context.globalCompositeOperation = isDecoration && op.action === 'remove' ? 'destination-out' : 'source-over';
+    context.fillStyle = context.strokeStyle = isDecoration ? op.color : op.action === 'remove' ? OPEN : SOLID;
     if (op.tool === 'rect') {
       context.fillRect(op.x, op.y, op.w, op.h);
     } else if (op.tool === 'square') {
@@ -179,19 +183,32 @@
     tile.width = tile.height = TILE;
     const tctx = tile.getContext('2d');
     tctx.fillStyle = SOLID; tctx.fillRect(0, 0, TILE, TILE);
-    decorationCtx.setTransform(1, 0, 0, 1, 0, 0);
-    decorationCtx.clearRect(0, 0, TILE, TILE);
     const x = tx * TILE, y = ty * TILE;
-    tctx.translate(-x, -y); decorationCtx.translate(-x, -y);
+    tctx.translate(-x, -y);
     const bounds = { x, y, right: x + TILE, bottom: y + TILE };
-    const paint = (op) => {
-      if (intersects(bounds, op.bounds)) paintOperation(op.action === 'decorate' ? decorationCtx : tctx, op);
-    };
-    operations.forEach(paint);
-    if (active) paint(active);
+    const decorationsByLayer = new Map();
+    function paint(op) {
+      if (!intersects(bounds, op.bounds)) return;
+      if (op.mode === 'terrain') paintOperation(tctx, op);
+      else if (settings.showDecorations) {
+        if (!decorationsByLayer.has(op.layerId)) decorationsByLayer.set(op.layerId, []);
+        decorationsByLayer.get(op.layerId).push(op);
+      }
+    }
+    operations.forEach(paint); if (active) paint(active);
     tctx.setTransform(1, 0, 0, 1, 0, 0);
-    tctx.globalAlpha = 0.34;
-    tctx.drawImage(decoration, 0, 0);
+    // Each layer is erased on its own transparent canvas before compositing.
+    // A removal can never erase terrain or decorations from another layer.
+    for (const layer of layers) {
+      const commands = decorationsByLayer.get(layer.id);
+      if (!layer.visible || !commands) continue;
+      decorationCtx.setTransform(1, 0, 0, 1, 0, 0);
+      decorationCtx.clearRect(0, 0, TILE, TILE);
+      decorationCtx.translate(-x, -y);
+      commands.forEach((op) => paintOperation(decorationCtx, op));
+      tctx.globalAlpha = 0.34;
+      tctx.drawImage(decoration, 0, 0);
+    }
     tileCache.set(key, { canvas: tile, bounds });
     if (tileCache.size > CACHE_LIMIT) tileCache.delete(tileCache.keys().next().value);
     return tile;
@@ -257,7 +274,7 @@
   function drawCursor() {
     if (!hover || settings.tool === 'hand' || gesture || space || settings.tool === 'rect') return;
     const size = effectiveSize() * view.scale;
-    ctx.save(); ctx.strokeStyle = settings.action === 'fill' ? '#e3b581' : settings.action === 'decorate' ? settings.color : '#a5ddd0';
+    ctx.save(); ctx.strokeStyle = settings.mode === 'decoration' ? settings.color : settings.action === 'fill' ? '#e3b581' : '#a5ddd0';
     ctx.lineWidth = 1;
     if (settings.tool === 'square') {
       const p = worldToScreen({ x: Math.floor(hover.x / settings.grid) * settings.grid,
@@ -312,8 +329,12 @@
 
   function beginStroke(point) {
     if (point.x < 0 || point.y < 0 || point.x >= WIDTH || point.y >= HEIGHT) return;
+    if (settings.mode === 'decoration' && (!settings.showDecorations || !selectedLayer().visible)) {
+      notify('Mostre as decorações e a camada selecionada antes de desenhar nela.');
+      return;
+    }
     active = { tool: settings.tool, action: settings.action, size: effectiveSize(), grid: settings.grid,
-      color: settings.color, erase: settings.eraseDecoration };
+      color: settings.color, mode: settings.mode, layerId: settings.mode === 'decoration' ? settings.layerId : null };
     if (active.tool === 'rect') {
       const start = snapRect(point);
       // At the far edge a minimum-size rectangle must still fit in the map.
@@ -431,6 +452,15 @@
   }, { passive: false });
 
   function syncUI() {
+    const isDecoration = settings.mode === 'decoration';
+    document.querySelectorAll('[data-mode]').forEach((button) => {
+      const selected = button.dataset.mode === settings.mode;
+      button.classList.toggle('active', selected); button.setAttribute('aria-pressed', selected);
+    });
+    $('quick-mode').setAttribute('aria-pressed', isDecoration);
+    $('quick-mode').setAttribute('aria-label', isDecoration ? 'Modo decoração ativo. Mudar para terreno (3)' : 'Ativar modo decoração (3)');
+    $('remove-description').textContent = isDecoration ? 'Apague só nesta camada' : 'Crie áreas jogáveis';
+    $('fill-description').textContent = isDecoration ? 'Pinte só nesta camada' : 'Reconstrua os limites';
     document.querySelectorAll('[data-action], [data-quick-action]').forEach((button) => {
       const selected = (button.dataset.action || button.dataset.quickAction) === settings.action;
       button.classList.toggle('active', selected); button.setAttribute('aria-pressed', selected);
@@ -445,15 +475,35 @@
     });
     $('brush-size').value = settings.size; $('smooth').value = settings.smooth;
     $('grid-size').value = settings.grid; $('show-grid').checked = settings.showGrid;
-    $('custom-color').value = settings.color; $('erase-decoration').checked = settings.eraseDecoration;
+    $('custom-color').value = settings.color;
+    $('decoration-settings').hidden = !isDecoration;
+    $('show-decorations').checked = settings.showDecorations;
+    $('decorations-button').setAttribute('aria-pressed', settings.showDecorations);
+    $('decorations-button').setAttribute('aria-label', settings.showDecorations ? 'Ocultar decorações (D)' : 'Mostrar decorações (D)');
+    const layer = selectedLayer();
+    const optionsKey = JSON.stringify(layers.map(({ id, name }) => [id, name]));
+    if (optionsKey !== layerOptionsKey) {
+      const options = layers.map((item, index) => {
+        const option = document.createElement('option');
+        option.value = item.id; option.textContent = `${index + 1}. ${item.name || 'Sem nome'}`;
+        return option;
+      });
+      $('decoration-layer').replaceChildren(...options);
+      layerOptionsKey = optionsKey;
+    }
+    $('decoration-layer').value = layer.id;
+    $('layer-name').value = layer.name;
+    $('show-layer').checked = layer.visible;
+    $('add-layer').disabled = layers.length >= MAX_LAYERS;
     $('size-output').textContent = `${effectiveSize()} u`;
     $('smooth-output').textContent = `${settings.smooth}%`;
     $('brush-size').disabled = ['rect', 'hand'].includes(settings.tool);
     $('smooth').disabled = settings.tool !== 'round';
     $('brush-note').textContent = { rect: 'Arraste entre dois pontos da grade.',
       square: 'Tamanho arredondado para passos do snap.', round: 'Mais suavização, menos tremores.', hand: 'Arraste para explorar o mapa.' }[settings.tool];
-    $('mode-label').textContent = settings.tool === 'hand' ? 'Mover mapa' : `${settings.action === 'decorate' && settings.eraseDecoration ? 'Apagar decoração' : actionLabels[settings.action]} · ${toolLabels[settings.tool]}`;
-    $('mode-dot').style.background = settings.action === 'fill' ? '#e3b581' : settings.action === 'decorate' ? settings.color : '#83c7ba';
+    $('mode-context').textContent = isDecoration ? `Decoração · ${layer.name || 'Sem nome'}` : 'Terreno';
+    $('mode-label').textContent = settings.tool === 'hand' ? 'Mover mapa' : `${actionLabels[settings.action]} · ${toolLabels[settings.tool]}`;
+    $('mode-dot').style.background = isDecoration ? settings.color : settings.action === 'fill' ? '#e3b581' : '#83c7ba';
     $('undo').disabled = !operations.length; $('redo').disabled = !redoStack.length;
     $('canvas-map-name').textContent = $('map-name').value.trim() || 'Mundo sem nome';
     $('empty-hint').hidden = operations.length > 0 || !!active;
@@ -463,18 +513,44 @@
 
   function changeSetting(key, value) {
     if (active) finishStroke();
-    settings[key] = value; syncUI(); renderSoon(); scheduleSave();
+    settings[key] = value;
+    if (key === 'showDecorations') tileCache.clear();
+    syncUI(); renderSoon(); scheduleSave(!['size', 'smooth', 'color'].includes(key));
   }
+
+  function selectedLayer() { return layers.find((layer) => layer.id === settings.layerId); }
+
+  document.querySelectorAll('[data-mode]').forEach((b) => b.addEventListener('click', () => changeSetting('mode', b.dataset.mode)));
+  $('quick-mode').addEventListener('click', () => changeSetting('mode', settings.mode === 'terrain' ? 'decoration' : 'terrain'));
+  $('show-decorations').addEventListener('change', (e) => changeSetting('showDecorations', e.target.checked));
+  $('decorations-button').addEventListener('click', () => changeSetting('showDecorations', !settings.showDecorations));
+  $('decoration-layer').addEventListener('change', (e) => changeSetting('layerId', e.target.value));
+  $('layer-name').addEventListener('input', (e) => {
+    selectedLayer().name = e.target.value.slice(0, 60); syncUI(); scheduleSave();
+  });
+  $('show-layer').addEventListener('change', (e) => {
+    if (active) finishStroke();
+    selectedLayer().visible = e.target.checked; tileCache.clear();
+    syncUI(); renderSoon(); scheduleSave(true);
+  });
+  $('add-layer').addEventListener('click', () => {
+    if (!ready || layers.length >= MAX_LAYERS) return;
+    if (active) finishStroke();
+    let index = 1;
+    while (layers.some((layer) => layer.id === `layer-${index}`)) index++;
+    const layer = { id: `layer-${index}`, name: `Decoração ${layers.length + 1}`, visible: true };
+    layers.push(layer); settings.layerId = layer.id;
+    syncUI(); renderSoon(); scheduleSave(true);
+  });
 
   document.querySelectorAll('[data-action], [data-quick-action]').forEach((b) => b.addEventListener('click', () => changeSetting('action', b.dataset.action || b.dataset.quickAction)));
   document.querySelectorAll('[data-tool], [data-quick-tool]').forEach((b) => b.addEventListener('click', () => changeSetting('tool', b.dataset.tool || b.dataset.quickTool)));
-  document.querySelectorAll('[data-color]').forEach((b) => b.addEventListener('click', () => { settings.eraseDecoration = false; changeSetting('color', b.dataset.color); }));
+  document.querySelectorAll('[data-color]').forEach((b) => b.addEventListener('click', () => changeSetting('color', b.dataset.color)));
   $('brush-size').addEventListener('input', (e) => changeSetting('size', Number(e.target.value)));
   $('smooth').addEventListener('input', (e) => changeSetting('smooth', Number(e.target.value)));
   $('grid-size').addEventListener('change', (e) => changeSetting('grid', Number(e.target.value)));
   $('show-grid').addEventListener('change', (e) => changeSetting('showGrid', e.target.checked));
   $('custom-color').addEventListener('input', (e) => changeSetting('color', e.target.value));
-  $('erase-decoration').addEventListener('change', (e) => changeSetting('eraseDecoration', e.target.checked));
   $('map-name').addEventListener('input', () => { syncUI(); scheduleSave(); });
 
   function undo() {
@@ -512,7 +588,9 @@
     if (event.code === 'Space') { event.preventDefault(); space = true; editor.classList.add('is-panning'); return; }
     if (key === 'escape') { finishStroke(true); $('sidebar').classList.remove('open'); $('toggle-settings').setAttribute('aria-expanded', false); }
     if (active) return;
-    if (['1', '2', '3'].includes(key)) changeSetting('action', { 1: 'remove', 2: 'fill', 3: 'decorate' }[key]);
+    if (['1', '2'].includes(key)) changeSetting('action', { 1: 'remove', 2: 'fill' }[key]);
+    if (key === '3') changeSetting('mode', settings.mode === 'terrain' ? 'decoration' : 'terrain');
+    if (key === 'd') changeSetting('showDecorations', !settings.showDecorations);
     if (['r', 'b', 'c', 'h'].includes(key)) changeSetting('tool', { r: 'rect', b: 'square', c: 'round', h: 'hand' }[key]);
     if (key === 'g') changeSetting('showGrid', !settings.showGrid);
     if (key === 'f') { fitMap(); scheduleSave(); }
@@ -554,7 +632,7 @@
       for (let y = 0; y < HEIGHT / TILE; y++) for (let x = 0; x < WIDTH / TILE; x++) outputCtx.drawImage(getTile(x, y), x * TILE, y * TILE);
       const blob = await new Promise((resolve) => output.toBlob(resolve, 'image/png'));
       if (!blob) throw new Error('PNG unavailable');
-      download(blob, 'png'); notify('Imagem completa exportada, sem grade, em 4096 × 2560 px.');
+      download(blob, 'png'); notify('Imagem exportada em 4096 × 2560 px, sem grade e com as camadas visíveis.');
     } catch { notify('Não foi possível gerar a imagem. Tente novamente ou salve um backup JSON.'); }
     finally { output.width = output.height = 0; button.disabled = false; button.textContent = 'Exportar imagem PNG ↗'; }
   });
@@ -563,13 +641,28 @@
   const colorValid = (v) => typeof v === 'string' && /^#[0-9a-f]{6}$/i.test(v);
 
   function validateDocument(data) {
-    if (!data || data.format !== 'clouded-level-sketch' || data.version !== 1 || data.width !== WIDTH || data.height !== HEIGHT ||
+    if (!data || data.format !== 'clouded-level-sketch' || ![1, 2].includes(data.version) || data.width !== WIDTH || data.height !== HEIGHT ||
       typeof data.name !== 'string' || data.name.length > 80 || !Array.isArray(data.operations) || data.operations.length > 50000) throw new Error('Formato de mapa incompatível.');
+    const legacy = data.version === 1;
+    const layerData = legacy ? initialLayers() : data.layers;
+    if (!Array.isArray(layerData) || !layerData.length || layerData.length > MAX_LAYERS) throw new Error('O backup contém camadas inválidas.');
+    const layerIds = new Set();
+    const cleanLayers = layerData.map((layer) => {
+      if (!layer || typeof layer.id !== 'string' || !/^[a-zA-Z0-9_-]{1,64}$/.test(layer.id) || layerIds.has(layer.id) ||
+        typeof layer.name !== 'string' || layer.name.length > 60 || typeof layer.visible !== 'boolean') throw new Error('O backup contém uma camada inválida ou duplicada.');
+      layerIds.add(layer.id);
+      return { id: layer.id, name: layer.name, visible: layer.visible };
+    });
     let totalPoints = 0;
     const validated = data.operations.map((op) => {
-      if (!op || !['rect', 'square', 'round'].includes(op.tool) || !['remove', 'fill', 'decorate'].includes(op.action) ||
-        !finite(op.size, 1, 512) || ![8, 16, 32, 64, 128].includes(op.grid) || !colorValid(op.color) || typeof op.erase !== 'boolean') throw new Error('O backup contém um pincel inválido.');
-      const clean = { tool: op.tool, action: op.action, size: op.size, grid: op.grid, color: op.color, erase: op.erase };
+      if (!op || !['rect', 'square', 'round'].includes(op.tool) || !(legacy ? ['remove', 'fill', 'decorate'] : ['remove', 'fill']).includes(op.action) ||
+        !finite(op.size, 1, 512) || ![8, 16, 32, 64, 128].includes(op.grid) || !colorValid(op.color) ||
+        (legacy && typeof op.erase !== 'boolean')) throw new Error('O backup contém um pincel inválido.');
+      const mode = legacy ? (op.action === 'decorate' ? 'decoration' : 'terrain') : op.mode;
+      const layerId = legacy ? (mode === 'decoration' ? cleanLayers[0].id : null) : op.layerId;
+      if (!['terrain', 'decoration'].includes(mode) || (mode === 'decoration' ? !layerIds.has(layerId) : layerId !== null)) throw new Error('O backup contém um traço em uma camada inválida.');
+      const action = legacy && op.action === 'decorate' ? (op.erase ? 'remove' : 'fill') : op.action;
+      const clean = { tool: op.tool, action, size: op.size, grid: op.grid, color: op.color, mode, layerId };
       if (op.tool === 'rect') {
         if (!finite(op.x, 0, WIDTH) || !finite(op.y, 0, HEIGHT) || !finite(op.w, 1, WIDTH) || !finite(op.h, 1, HEIGHT) || op.x + op.w > WIDTH || op.y + op.h > HEIGHT) throw new Error('O backup contém uma área fora do mapa.');
         Object.assign(clean, { x: op.x, y: op.y, w: op.w, h: op.h });
@@ -582,21 +675,26 @@
       }
       return setBounds(clean);
     });
-    const prefs = data.settings || {}, cleanSettings = { ...settings };
-    if (['remove', 'fill', 'decorate'].includes(prefs.action)) cleanSettings.action = prefs.action;
+    const prefs = data.settings || {}, cleanSettings = defaultSettings();
+    cleanSettings.layerId = layerIds.has(prefs.layerId) ? prefs.layerId : cleanLayers[0].id;
+    if (['remove', 'fill'].includes(prefs.action)) cleanSettings.action = prefs.action;
+    if (['terrain', 'decoration'].includes(prefs.mode)) cleanSettings.mode = prefs.mode;
+    if (legacy && prefs.action === 'decorate') {
+      cleanSettings.mode = 'decoration'; cleanSettings.action = prefs.eraseDecoration ? 'remove' : 'fill';
+    }
     if (['rect', 'square', 'round', 'hand'].includes(prefs.tool)) cleanSettings.tool = prefs.tool;
     if (finite(prefs.size, 8, 256)) cleanSettings.size = Math.round(prefs.size / 8) * 8;
     if (finite(prefs.smooth, 0, 95)) cleanSettings.smooth = prefs.smooth;
     if ([8, 16, 32, 64, 128].includes(prefs.grid)) cleanSettings.grid = prefs.grid;
     if (typeof prefs.showGrid === 'boolean') cleanSettings.showGrid = prefs.showGrid;
-    if (typeof prefs.eraseDecoration === 'boolean') cleanSettings.eraseDecoration = prefs.eraseDecoration;
+    if (typeof prefs.showDecorations === 'boolean') cleanSettings.showDecorations = prefs.showDecorations;
     if (colorValid(prefs.color)) cleanSettings.color = prefs.color;
     const cleanView = data.view && finite(data.view.x, -1000000, 1000000) && finite(data.view.y, -1000000, 1000000) && finite(data.view.scale, 0.03, 5) ? { x: data.view.x, y: data.view.y, scale: data.view.scale } : null;
-    return { name: data.name, operations: validated, settings: cleanSettings, view: cleanView };
+    return { name: data.name, operations: validated, layers: cleanLayers, settings: cleanSettings, view: cleanView };
   }
 
   function applyDocument(data, restoreView = false) {
-    operations = data.operations; redoStack = []; active = null;
+    operations = data.operations; layers = data.layers; redoStack = []; active = null;
     settings = data.settings; $('map-name').value = data.name;
     tileCache.clear();
     if (restoreView && data.view) view = data.view;
@@ -618,7 +716,8 @@
 
   $('new-map').addEventListener('click', () => {
     if (!ready || !window.confirm('Criar um mapa novo substitui o mapa atual por uma superfície sólida. Use Backup antes se quiser guardar o desenho atual. Continuar?')) return;
-    operations = []; redoStack = []; tileCache.clear();
+    operations = []; redoStack = []; layers = initialLayers(); tileCache.clear();
+    settings.layerId = layers[0].id; settings.mode = 'terrain'; settings.action = 'remove'; settings.showDecorations = true;
     $('map-name').value = 'Mundo sem nome'; fitMap(); syncUI(); scheduleSave(true);
   });
 

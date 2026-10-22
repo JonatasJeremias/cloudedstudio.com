@@ -24,11 +24,12 @@
     <symbol id="i-fit" viewBox="0 0 24 24"><path d="M8 3H3v5 M16 3h5v5 M21 16v5h-5 M8 21H3v-5"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12 m-5-5 5 5 5-5 M4 16v5h16v-5"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16 M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
   </defs></svg>
   <header class="topbar">
     <a class="brand" href="../../" aria-label="Voltar para Clouded Studio"><span class="brand-mark"></span><span>CLOUDED<span class="brand-studio"> STUDIO</span></span></a>
     <span class="header-divider"></span>
-    <div class="app-name">Level Sketch <span class="version">v0.1</span></div>
+    <div class="app-name">Level Sketch <span class="version">v0.2</span></div>
     <div class="save-state" id="save-state" role="status"><span class="status-dot"></span><span id="save-label">Abrindo mapa…</span></div>
     <button class="icon-button mobile-settings" id="toggle-settings" aria-label="Abrir ajustes" aria-expanded="false" aria-controls="sidebar"><svg><use href="#i-settings"/></svg></button>
     <button class="button top-help" id="help-button" aria-label="Como usar">?</button>
@@ -40,10 +41,29 @@
       <label class="field-label" for="map-name">NOME DO MAPA</label>
       <input id="map-name" class="map-name" value="Mundo sem nome" maxlength="80" autocomplete="off" spellcheck="false">
 
+      <section class="control-section"><h2>MODO DE EDIÇÃO</h2><div class="mode-list" role="group" aria-label="Modo de edição">
+        <button data-mode="terrain" class="button active" aria-pressed="true">Terreno</button>
+        <button data-mode="decoration" class="button" aria-pressed="false"><svg><use href="#i-decor"/></svg>Decoração</button>
+      </div><label class="toggle-row"><input type="checkbox" id="show-decorations" checked><span>Mostrar decorações</span></label></section>
+
       <section class="control-section"><h2>AÇÃO</h2><div class="action-list" role="group" aria-label="Ação do pincel">
-        <button data-action="remove" class="action-button active" aria-pressed="true"><svg><use href="#i-cut"/></svg><span>Remover<small>Crie áreas jogáveis</small></span><kbd>1</kbd></button>
-        <button data-action="fill" class="action-button" aria-pressed="false"><svg><use href="#i-fill"/></svg><span>Preencher<small>Reconstrua os limites</small></span><kbd>2</kbd></button>
-        <button data-action="decorate" class="action-button" aria-pressed="false"><svg><use href="#i-decor"/></svg><span>Decorar<small>Dê identidade ao ambiente</small></span><kbd>3</kbd></button>
+        <button data-action="remove" class="action-button active" aria-pressed="true"><svg><use href="#i-cut"/></svg><span>Remover<small id="remove-description">Crie áreas jogáveis</small></span><kbd>1</kbd></button>
+        <button data-action="fill" class="action-button" aria-pressed="false"><svg><use href="#i-fill"/></svg><span>Preencher<small id="fill-description">Reconstrua os limites</small></span><kbd>2</kbd></button>
+      </div></section>
+
+      <section class="control-section" id="decoration-settings" hidden><h2>CAMADAS DE DECORAÇÃO</h2>
+        <label class="field-label" for="decoration-layer">CAMADA ATIVA</label>
+        <div class="layer-picker"><select id="decoration-layer" aria-label="Camada de decoração"></select><button class="button" id="add-layer" aria-label="Adicionar camada de decoração">+</button></div>
+        <label class="field-label" for="layer-name">NOME DA CAMADA</label>
+        <input id="layer-name" class="map-name" value="Decoração 1" maxlength="60" autocomplete="off">
+        <label class="toggle-row"><input type="checkbox" id="show-layer" checked><span>Mostrar esta camada</span></label>
+        <p class="setting-note">Preencher e remover afetam só esta camada. Camadas novas ficam sobre as anteriores.</p>
+        <h2>COR DO PREENCHIMENTO</h2><div class="swatches" role="group" aria-label="Cor da decoração">
+        <button class="swatch active" data-color="#64b6ac" style="--swatch:#64b6ac" aria-label="Verde névoa" aria-pressed="true"></button>
+        <button class="swatch" data-color="#799fd4" style="--swatch:#799fd4" aria-label="Azul" aria-pressed="false"></button>
+        <button class="swatch" data-color="#bd91ca" style="--swatch:#bd91ca" aria-label="Lilás" aria-pressed="false"></button>
+        <button class="swatch" data-color="#d1ab6d" style="--swatch:#d1ab6d" aria-label="Âmbar" aria-pressed="false"></button>
+        <input type="color" id="custom-color" value="#64b6ac" aria-label="Cor personalizada">
       </div></section>
 
       <section class="control-section"><h2>FERRAMENTA</h2><div class="tool-list" role="group" aria-label="Formato do pincel">
@@ -63,14 +83,6 @@
         <label class="toggle-row"><input type="checkbox" id="show-grid" checked><span>Mostrar grade</span></label>
       </section>
 
-      <section class="control-section" id="decoration-settings"><h2>COR DA DECORAÇÃO</h2><div class="swatches" role="group" aria-label="Cor da decoração">
-        <button class="swatch active" data-color="#64b6ac" style="--swatch:#64b6ac" aria-label="Verde névoa" aria-pressed="true"></button>
-        <button class="swatch" data-color="#799fd4" style="--swatch:#799fd4" aria-label="Azul" aria-pressed="false"></button>
-        <button class="swatch" data-color="#bd91ca" style="--swatch:#bd91ca" aria-label="Lilás" aria-pressed="false"></button>
-        <button class="swatch" data-color="#d1ab6d" style="--swatch:#d1ab6d" aria-label="Âmbar" aria-pressed="false"></button>
-        <input type="color" id="custom-color" value="#64b6ac" aria-label="Cor personalizada">
-      </div><label class="toggle-row"><input type="checkbox" id="erase-decoration"><span>Apagar decoração</span></label></section>
-
       <div class="sidebar-bottom"><div class="file-actions"><button class="button" id="export-json"><svg><use href="#i-download"/></svg>Backup</button><button class="button" id="import-json">Abrir backup</button></div><button class="button export-image" id="export-png">Exportar imagem PNG ↗</button><button class="text-button" id="sidebar-help">Como usar e atalhos</button><button class="text-button" id="new-map">Novo mapa</button><p class="local-note">Só neste navegador. Faça um backup para levar seu mapa a outro dispositivo.</p></div>
     </aside>
 
@@ -78,14 +90,14 @@
       <canvas id="map-canvas" tabindex="0" aria-label="Mapa do level. Desenhe com um dedo; use dois dedos para mover e ampliar.">Seu navegador precisa suportar Canvas para editar mapas.</canvas>
       <div class="canvas-top"><div class="map-badge"><span class="live-dot"></span><span id="canvas-map-name">Mundo sem nome</span><span class="badge-divider">/</span><span class="map-dimensions">4096 × 2560 u</span></div><div class="history-controls"><button class="icon-button" id="undo" aria-label="Desfazer (Ctrl Z)" disabled><svg><use href="#i-undo"/></svg></button><button class="icon-button" id="redo" aria-label="Refazer (Ctrl Shift Z)" disabled><svg><use href="#i-redo"/></svg></button></div></div>
       <div class="empty-hint" id="empty-hint"><span class="hint-cross">＋</span><h2>Todo mundo começa<br>com um espaço.</h2><p>Arraste para recortar sua primeira área.<br>O sólido é o limite. O vazio é o caminho.</p><span class="hint-tag">RETÂNGULO + REMOVER</span></div>
-      <div class="canvas-bottom"><div class="mode-badge"><span id="mode-dot"></span><span id="mode-label">Remover · Retângulo</span></div><div class="view-controls"><button class="icon-button" id="grid-button" aria-label="Alternar grade (G)" aria-pressed="true"><svg><use href="#i-grid"/></svg></button><span class="control-divider"></span><button class="icon-button zoom-symbol" id="zoom-out" aria-label="Diminuir zoom">−</button><button class="zoom-value" id="zoom-value" aria-label="Zoom de 100%">100%</button><button class="icon-button zoom-symbol" id="zoom-in" aria-label="Aumentar zoom">+</button><span class="control-divider"></span><button class="icon-button" id="fit-map" aria-label="Enquadrar mapa (F)"><svg><use href="#i-fit"/></svg></button></div></div>
+      <div class="canvas-bottom"><div class="mode-badge"><span id="mode-dot"></span><span class="mode-badge-text"><span id="mode-context">Terreno</span><span id="mode-label">Remover · Retângulo</span></span></div><div class="view-controls"><button class="icon-button" id="decorations-button" aria-label="Ocultar decorações (D)" aria-pressed="true"><svg><use href="#i-eye"/></svg></button><button class="icon-button" id="grid-button" aria-label="Alternar grade (G)" aria-pressed="true"><svg><use href="#i-grid"/></svg></button><span class="control-divider"></span><button class="icon-button zoom-symbol" id="zoom-out" aria-label="Diminuir zoom">−</button><button class="zoom-value" id="zoom-value" aria-label="Zoom de 100%">100%</button><button class="icon-button zoom-symbol" id="zoom-in" aria-label="Aumentar zoom">+</button><span class="control-divider"></span><button class="icon-button" id="fit-map" aria-label="Enquadrar mapa (F)"><svg><use href="#i-fit"/></svg></button></div></div>
     </section>
   </main>
   <footer class="statusbar"><span><span class="legend-solid"></span>Sólido / colisão <span class="legend-open"></span>Área jogável <span class="legend-decor"></span>Decoração</span><span id="pointer-position">4096 × 2560 unidades</span><span class="gesture-tip">Dois dedos para mover e ampliar · Espaço para mover</span></footer>
-  <div class="mobile-dock" aria-label="Ferramentas rápidas"><button class="icon-button" data-quick-action="remove" aria-label="Remover" aria-pressed="true"><svg><use href="#i-cut"/></svg></button><button class="icon-button" data-quick-action="fill" aria-label="Preencher" aria-pressed="false"><svg><use href="#i-fill"/></svg></button><button class="icon-button" data-quick-action="decorate" aria-label="Decorar" aria-pressed="false"><svg><use href="#i-decor"/></svg></button><span class="control-divider"></span><button class="icon-button" data-quick-tool="rect" aria-label="Retângulo" aria-pressed="true"><svg><use href="#i-rect"/></svg></button><button class="icon-button" data-quick-tool="square" aria-label="Quadrado" aria-pressed="false"><svg><use href="#i-square"/></svg></button><button class="icon-button" data-quick-tool="round" aria-label="Redondo" aria-pressed="false"><svg><use href="#i-round"/></svg></button><button class="icon-button" data-quick-tool="hand" aria-label="Mover" aria-pressed="false"><svg><use href="#i-hand"/></svg></button></div>
+  <div class="mobile-dock" aria-label="Ferramentas rápidas"><button class="icon-button" data-quick-action="remove" aria-label="Remover" aria-pressed="true"><svg><use href="#i-cut"/></svg></button><button class="icon-button" data-quick-action="fill" aria-label="Preencher" aria-pressed="false"><svg><use href="#i-fill"/></svg></button><button class="icon-button" id="quick-mode" aria-label="Ativar modo decoração (3)" aria-pressed="false"><svg><use href="#i-decor"/></svg></button><span class="control-divider"></span><button class="icon-button" data-quick-tool="rect" aria-label="Retângulo" aria-pressed="true"><svg><use href="#i-rect"/></svg></button><button class="icon-button" data-quick-tool="square" aria-label="Quadrado" aria-pressed="false"><svg><use href="#i-square"/></svg></button><button class="icon-button" data-quick-tool="round" aria-label="Redondo" aria-pressed="false"><svg><use href="#i-round"/></svg></button><button class="icon-button" data-quick-tool="hand" aria-label="Mover" aria-pressed="false"><svg><use href="#i-hand"/></svg></button></div>
   <div class="toast" id="toast" role="status" hidden></div>
   <input type="file" id="import-file" accept=".json,application/json" hidden>
-  <dialog id="help-dialog"><button class="dialog-close icon-button" aria-label="Fechar ajuda">×</button><span class="eyebrow">UM RASCUNHO DO SEU MUNDO</span><h2>Do sólido ao explorável.</h2><p>Comece recortando salas e corredores. Cada espaço aberto é uma área jogável; o que sobra é terreno sólido.</p><dl><dt>Remover / preencher / decorar</dt><dd>Recorte o terreno, reconstrua colisões ou pinte uma camada independente. Preencher e remover preservam a decoração.</dd><dt>Retângulo e quadrado</dt><dd>O retângulo vai de um ponto a outro da grade. O pincel quadrado pinta livremente em passos de snap. Segure Shift para um retângulo quadrado.</dd><dt>Redondo e suavização</dt><dd>Desenhe curvas livres. Aumente a suavização para filtrar pequenos tremores. O tamanho é medido em unidades do mapa e independe do zoom.</dd><dt>Navegação</dt><dd>Celular: um dedo desenha, dois dedos movem e ampliam. Mouse: roda amplia; espaço + arrastar ou botão do meio move. A ferramenta Mover também funciona com um dedo.</dd><dt>Atalhos</dt><dd>1 / 2 / 3: ação · R / B / C / H: ferramenta · G: grade · F: enquadrar · [ / ]: tamanho · Ctrl ou ⌘ Z: desfazer · Ctrl ou ⌘ Shift Z: refazer.</dd><dt>Salvamento local</dt><dd>O mapa é salvo automaticamente neste navegador e neste dispositivo. Limpar os dados do site apaga esse salvamento. Use Backup e Abrir backup para transferir ou guardar uma cópia. PNG exporta o mapa completo, sem grade.</dd></dl><button class="button primary dialog-close">Vamos desenhar</button></dialog>
+  <dialog id="help-dialog"><button class="dialog-close icon-button" aria-label="Fechar ajuda">×</button><span class="eyebrow">UM RASCUNHO DO SEU MUNDO</span><h2>Do sólido ao explorável.</h2><p>Comece recortando salas e corredores. Cada espaço aberto é uma área jogável; o que sobra é terreno sólido.</p><dl><dt>Terreno e decoração</dt><dd>Escolha o modo de edição. No terreno, Remover abre caminhos e Preencher reconstrói colisões. Na decoração, Preencher pinta e Remover apaga somente a camada selecionada. Todos os pincéis funcionam nos dois modos.</dd><dt>Camadas e visualização</dt><dd>No modo decoração, use + para criar uma camada e a lista para escolher onde desenhar. Você pode renomear e ocultar cada camada. O botão de olho mostra ou oculta todas as decorações, inclusive no PNG. O terreno e as outras camadas são preservados ao apagar. Mostre a camada antes de editá-la.</dd><dt>Retângulo e quadrado</dt><dd>O retângulo vai de um ponto a outro da grade. O pincel quadrado pinta livremente em passos de snap. Segure Shift para um retângulo quadrado.</dd><dt>Redondo e suavização</dt><dd>Desenhe curvas livres. Aumente a suavização para filtrar pequenos tremores. O tamanho é medido em unidades do mapa e independe do zoom.</dd><dt>Navegação</dt><dd>Celular: um dedo desenha, dois dedos movem e ampliam. Mouse: roda amplia; espaço + arrastar ou botão do meio move. A ferramenta Mover também funciona com um dedo.</dd><dt>Atalhos</dt><dd>1 / 2: remover / preencher · 3: terreno / decoração · D: mostrar decorações · R / B / C / H: ferramenta · G: grade · F: enquadrar · [ / ]: tamanho · Ctrl ou ⌘ Z: desfazer · Ctrl ou ⌘ Shift Z: refazer.</dd><dt>Salvamento local</dt><dd>O mapa, camadas e visibilidade são salvos automaticamente neste navegador e neste dispositivo. Mapas antigos mantêm suas decorações na primeira camada. Limpar os dados do site apaga esse salvamento. Use Backup e Abrir backup para transferir ou guardar uma cópia. PNG exporta o mapa completo, sem grade, com as camadas visíveis.</dd></dl><button class="button primary dialog-close">Vamos desenhar</button></dialog>
   <noscript>Ative o JavaScript para usar o Level Sketch. Todo o processamento acontece no seu navegador.</noscript>
 </body>
 </html>
